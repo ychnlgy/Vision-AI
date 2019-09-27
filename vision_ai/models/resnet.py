@@ -29,7 +29,7 @@ class Shortcut(torch.nn.Module):
             torch.nn.ReflectionPad2d(padding),
             torch.nn.Conv2d(
                 self.in_channels,
-                self.out_channels,
+                self.out_channels//4,
                 1,
                 bias=False
             )
