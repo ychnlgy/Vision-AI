@@ -1,19 +1,23 @@
+import torch.utils.data
 import torchvision
 
 
-def get(root, download):
+def get(root, download, batch_size, num_workers):
     dataset = torchvision.datasets.MNIST(
         root=root,
         train=True,
         download=download,
         transform=torchvision.transforms.Compose([
             torchvision.transforms.RandomCrop(32, padding=4),
-            torchvision.transforms.RandomRotation(
-                45,
-                resample=2 # bilinear
-            ),
             torchvision.transforms.ToTensor()
         ])
+    )
+
+    data = torch.utils.data.DataLoader(
+        dataset,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=num_workers
     )
 
     testset = torchvision.datasets.MNIST(
@@ -23,4 +27,11 @@ def get(root, download):
         transform=torchvision.transforms.ToTensor()
     )
 
-    return dataset, testset
+    test = torch.utils.data.DataLoader(
+        testset,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers
+    )
+
+    return data, test
