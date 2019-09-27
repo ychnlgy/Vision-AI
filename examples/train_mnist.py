@@ -112,7 +112,7 @@ class Model(torch.nn.Module):
 
     def forward(self, X):
         Xh = self.cnn(X).view(X.size(0), 128)
-        return self.linear(X)
+        return self.linear(Xh)
 
 
 if __name__ == "__main__":
