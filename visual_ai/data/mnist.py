@@ -20,7 +20,7 @@ def get(root, download):
         root=root,
         train=False,
         download=download,
-        transform=torchvision.transform.ToTensor()
+        transform=torchvision.transforms.ToTensor()
     )
 
     return dataset, testset
