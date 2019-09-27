@@ -25,13 +25,14 @@ class Shortcut(torch.nn.Module):
         return self.bnorm(hx)
 
     def _create_conv(self, padding):
-        return torch.nn.Conv2d(
-            self.in_channels,
-            self.out_channels,
-            1,
-            padding=padding,
-            stride=2,
-            bias=False
+        return torch.nn.Sequential(
+            torch.nn.ReflectionPad2d(padding),
+            torch.nn.Conv2d(
+                self.in_channels,
+                self.out_channels,
+                1,
+                bias=False
+            )
         )
 
 
