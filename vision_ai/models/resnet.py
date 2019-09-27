@@ -31,6 +31,7 @@ class Shortcut(torch.nn.Module):
                 self.in_channels,
                 self.out_channels//4,
                 1,
+                stride=2,
                 bias=False
             )
         )
