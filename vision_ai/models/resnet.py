@@ -4,6 +4,7 @@ import torch
 class Shortcut(torch.nn.Module):
 
     def __init__(self, in_channels, out_channels):
+        super().__init__()
         assert out_channels % 4 == 0
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -37,6 +38,7 @@ class Shortcut(torch.nn.Module):
 class Block(torch.nn.Module):
 
     def __init__(self, block, shortcut=None):
+        super().__init__()
         self.block = block
         self.shortcut = [shortcut, torch.nn.Sequential()][shortcut is None]
 
