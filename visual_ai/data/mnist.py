@@ -10,7 +10,7 @@ def get(root, download):
             torchvision.transforms.RandomCrop(32, padding=4),
             torchvision.transforms.RandomRotation(
                 45,
-                resample="bilinear"
+                resample=2 # bilinear
             ),
             torchvision.transforms.ToTensor()
         ])
