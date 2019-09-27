@@ -101,7 +101,7 @@ class Model(torch.nn.Module):
                     torch.nn.BatchNorm2d(128),
                 ),
                 shortcut=vision_ai.models.resnet.Shortcut(64, 128)
-            )
+            ),
             torch.nn.ReLU(),
             torch.nn.AvgPool2d(8)
         )
