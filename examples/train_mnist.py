@@ -18,14 +18,16 @@ def main(args):
 
     model = Model().to(device)
     lossf = torch.nn.CrossEntropyLoss()
-    optim = torch.nn.SGD(
+    optim = torch.optim.SGD(
         model.parameters(),
         lr=1e-2,
         momentum=0.9,
         weight_decay=1e-4
     )
     
-    sched = torch.nn.CosineAnnealingLR(optim, T_max=args.epochs)
+    sched = torch.optim.lr_scheduler.CosineAnnealingLR(
+        optim, T_max=args.epochs
+    )
 
     for epoch in range(1, args.epochs+1):
         
