@@ -34,7 +34,7 @@ class Shortcut(torch.nn.Module):
         )
 
 
-class ResBlock(torch.nn.Module):
+class Block(torch.nn.Module):
 
     def __init__(self, block, shortcut=None):
         self.block = block
