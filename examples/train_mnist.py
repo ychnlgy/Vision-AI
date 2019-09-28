@@ -35,7 +35,7 @@ def main(args):
         
         with tqdm.tqdm(dataloader, ncols=80) as bar:
         
-            for x, y in dataloader:
+            for x, y in bar:
                 x = x.to(device)
                 y = y.to(device)
                 yh = model(x)
