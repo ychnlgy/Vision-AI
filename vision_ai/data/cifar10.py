@@ -22,7 +22,7 @@ def get(root, download, batch_size, num_workers):
         num_workers=num_workers
     )
 
-    testset = torchvision.datasets.MNIST(
+    testset = torchvision.datasets.CIFAR10(
         root=root,
         train=False,
         download=download,
