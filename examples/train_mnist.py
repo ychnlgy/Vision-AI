@@ -12,7 +12,7 @@ def main(args):
     dataloader, testloader = vision_ai.data.mnist.get(
         root="~/torchvision-data",
         download=True,
-        batch_size=128,
+        batch_size=64,
         num_workers=4
     )
 
@@ -20,9 +20,9 @@ def main(args):
     lossf = torch.nn.CrossEntropyLoss()
     optim = torch.optim.SGD(
         model.parameters(),
-        lr=1e-2,
+        lr=1e-1,
         momentum=0.9,
-        weight_decay=1e-4
+        weight_decay=1e-5
     )
     
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(
@@ -105,10 +105,22 @@ class Model(torch.nn.Module):
                 ),
                 shortcut=vision_ai.models.resnet.Shortcut(64, 128)
             ),
+            vision_ai.models.resnet.Block(
+                block=torch.nn.Sequential(
+                    torch.nn.ReLU(),
+                    torch.nn.Conv2d(128, 256, 3, padding=1, bias=False, stride=2),  # 8 -> 4
+                    torch.nn.BatchNorm2d(256),
+
+                    torch.nn.ReLU(),
+                    torch.nn.Conv2d(256, 256, 3, padding=1, bias=False),
+                    torch.nn.BatchNorm2d(256),
+                ),
+                shortcut=vision_ai.models.resnet.Shortcut(128, 256)
+            ),
             torch.nn.ReLU(),
             torch.nn.AdaptiveAvgPool2d(1)
         )
-        self.linear = torch.nn.Linear(128, 10)
+        self.linear = torch.nn.Linear(256, 10)
 
     def forward(self, X):
         Xh = self.cnn(X).view(X.size(0), 128)
