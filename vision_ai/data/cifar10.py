@@ -3,12 +3,14 @@ import torchvision
 
 
 def get(root, download, batch_size, num_workers):
-    dataset = torchvision.datasets.MNIST(
+    dataset = torchvision.datasets.CIFAR10(
         root=root,
         train=True,
         download=download,
         transform=torchvision.transforms.Compose([
-            torchvision.transforms.RandomCrop(28, padding=2),
+            torchvision.transforms.RandomHorizontalFlip(p=0.5),
+            torchvision.transforms.Pad(4, padding_mode="symmetric"),
+            torchvision.transforms.RandomCrop(32),
             torchvision.transforms.ToTensor()
         ])
     )
