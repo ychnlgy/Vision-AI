@@ -91,7 +91,7 @@ class Model(torch.nn.Module):
                     torch.nn.Conv2d(64, 64, 3, padding=1, bias=False),
                     torch.nn.BatchNorm2d(64),
                 ),
-                shortcut=vision_ai.models.resnet.Shortcut(32, 64)
+                shortcut=torch.nn.Conv2d(32, 64, 1, stride=2)
             ),
             vision_ai.models.resnet.Block(
                 block=torch.nn.Sequential(
@@ -103,27 +103,15 @@ class Model(torch.nn.Module):
                     torch.nn.Conv2d(128, 128, 3, padding=1, bias=False),
                     torch.nn.BatchNorm2d(128),
                 ),
-                shortcut=vision_ai.models.resnet.Shortcut(64, 128)
-            ),
-            vision_ai.models.resnet.Block(
-                block=torch.nn.Sequential(
-                    torch.nn.ReLU(),
-                    torch.nn.Conv2d(128, 256, 3, padding=1, bias=False, stride=2),  # 8 -> 4
-                    torch.nn.BatchNorm2d(256),
-
-                    torch.nn.ReLU(),
-                    torch.nn.Conv2d(256, 256, 3, padding=1, bias=False),
-                    torch.nn.BatchNorm2d(256),
-                ),
-                shortcut=vision_ai.models.resnet.Shortcut(128, 256)
+                shortcut=torch.nn.Conv2d(64, 128, 1, stride=2)
             ),
             torch.nn.ReLU(),
             torch.nn.AdaptiveAvgPool2d(1)
         )
-        self.linear = torch.nn.Linear(256, 10)
+        self.linear = torch.nn.Linear(128, 10)
 
     def forward(self, X):
-        Xh = self.cnn(X).view(X.size(0), 256)
+        Xh = self.cnn(X).view(X.size(0), 128)
         return self.linear(Xh)
 
 
