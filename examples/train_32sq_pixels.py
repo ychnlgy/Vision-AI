@@ -5,6 +5,7 @@ import tqdm
 
 import vision_ai
 
+import model_cifar10
 import model_mnist
 
 
