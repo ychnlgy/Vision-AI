@@ -8,7 +8,7 @@ class Model(torch.nn.Module):
     def __init__(self):
         super().__init__()
         self.cnn = torch.nn.Sequential(
-            torch.nn.Conv2d(1, 32, 3, padding=1),
+            torch.nn.Conv2d(3, 32, 3, padding=1),
             vision_ai.models.resnet.Block(
                 block=torch.nn.Sequential(
                     torch.nn.ReLU(),
