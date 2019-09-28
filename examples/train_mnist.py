@@ -106,7 +106,7 @@ class Model(torch.nn.Module):
                 shortcut=vision_ai.models.resnet.Shortcut(64, 128)
             ),
             torch.nn.ReLU(),
-            torch.nn.AvgPool2d(8)
+            torch.nn.AdaptiveAvgPool2d(1)
         )
         self.linear = torch.nn.Linear(128, 10)
 
