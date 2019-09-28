@@ -123,7 +123,7 @@ class Model(torch.nn.Module):
         self.linear = torch.nn.Linear(256, 10)
 
     def forward(self, X):
-        Xh = self.cnn(X).view(X.size(0), 128)
+        Xh = self.cnn(X).view(X.size(0), 256)
         return self.linear(Xh)
 
 
