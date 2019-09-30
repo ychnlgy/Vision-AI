@@ -6,6 +6,7 @@ import vision_ai
 class Unet(torch.nn.Module):
 
     def __init__(self, layers, shortcuts):
+        super().__init__()
         assert layers
         assert len(layers) == len(shortcuts) + 1
         self.layers = torch.nn.ModuleList(layers)
