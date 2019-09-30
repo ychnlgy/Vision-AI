@@ -61,6 +61,8 @@ def main(args):
 
         print("Epoch %d test accuracy: %.2f%%" % (epoch, acc/n*100.0))
 
+        if epoch > args.save_cycle:
+            torch.save(model.cpu().state_dict(), args.save)
 
 
 if __name__ == "__main__":
@@ -74,6 +76,10 @@ if __name__ == "__main__":
     parser.add_argument("--epochs", type=int, required=True)
     parser.add_argument("--lr", type=float, required=True)
     parser.add_argument("--l2_reg", type=float, required=True)
+    
+    # Committing to disk
+    parser.add_argument("--save", required=True)
+    parser.add_argument("--save_cycle", type=int, required=True)
     
     args = parser.parse_args()
     main(args)
