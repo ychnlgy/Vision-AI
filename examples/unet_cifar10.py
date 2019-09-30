@@ -81,3 +81,12 @@ class Unet(vision_ai.models.Unet):
                 )
             ]
         )
+        self.tail = torch.nn.Sequential(
+            torch.nn.ReLU(),
+            torch.nn.Conv2d(128, 3, 1, bias=False),
+            torch.nn.Tanh()
+        )
+    
+    def forward(self, X):
+        Xh = super().forward(X)
+        return self.tail(Xh)
