@@ -19,7 +19,7 @@ def main(args):
     )
 
     model = torch.nn.DataParallel(unet_cifar10.Unet()).to(device)
-    lossf = torch.nn.MSELoss()
+    lossf = torch.nn.L1Loss(reduction="sum")
     optim = torch.optim.AdamW(
         model.parameters(),
         lr=args.lr,
