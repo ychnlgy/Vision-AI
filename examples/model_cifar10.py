@@ -30,7 +30,7 @@ class Model(torch.nn.Module):
                     torch.nn.Conv2d(64, 64, 3, padding=1, bias=False),
                     torch.nn.BatchNorm2d(64),
                 ),
-                shortcut=torch.nn.Conv2d(32, 64, 1, stride=2)
+                shortcut=torch.nn.Conv2d(32, 64, 1, stride=2, bias=False)
             ),
             vision_ai.models.resnet.Block(
                 block=torch.nn.Sequential(
@@ -42,7 +42,7 @@ class Model(torch.nn.Module):
                     torch.nn.Conv2d(128, 128, 3, padding=1, bias=False),
                     torch.nn.BatchNorm2d(128),
                 ),
-                shortcut=torch.nn.Conv2d(64, 128, 1, stride=2)
+                shortcut=torch.nn.Conv2d(64, 128, 1, stride=2, bias=False)
             ),
             torch.nn.ReLU(),
             torch.nn.AdaptiveAvgPool2d(1)
