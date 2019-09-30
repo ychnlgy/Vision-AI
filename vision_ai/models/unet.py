@@ -20,7 +20,7 @@ class Unet(torch.nn.Module):
             hidden.append(X)
         n = len(hidden)
         for d in range(n - 1):
-            i = n - d
+            i = n - d - 1
             j = i - 1
             Xa = hidden[i]
             Xb = hidden[j]
