@@ -18,7 +18,7 @@ def main(args):
         num_workers=args.workers
     )
 
-    model = unet_cifar10.Unet().to(device)
+    model = torch.nn.DataParallel(unet_cifar10.Unet()).to(device)
     lossf = torch.nn.MSELoss()
     optim = torch.optim.Adam(
         model.parameters(),
