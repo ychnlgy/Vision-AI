@@ -23,5 +23,5 @@ class CoverDataset(torch.utils.data.Dataset):
         i = random.randint(0, W - self.box_w)
         j = random.randint(0, H - self.box_h)
         xc = x.clone()
-        xc[:, x:x + self.box_w, y:y + self.box_h] = 0
+        xc[:, i:i + self.box_w, j:j + self.box_h] = 0
         return x, xc, y
