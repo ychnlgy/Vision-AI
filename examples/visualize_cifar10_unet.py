@@ -11,11 +11,15 @@ import vision_ai
 import unet_cifar10
 
 
+FIG = None
+AXE = None
+
+
 def main(args):
     dataloader, testloader = vision_ai.data.cifar10.get(
         root="~/torchvision-data",
         download=False,
-        batch_size=1,
+        batch_size=args.samples,
         num_workers=1
     )
     
@@ -25,26 +29,37 @@ def main(args):
     
     model.load_state_dict(torch.load(args.save, map_location="cpu"))
     
-    model.train()
-    
-    fig, axes = pyplot.subplots(ncols=2)
+    model.eval()
     
     with torch.no_grad():
-        for i, (x, _) in zip(range(args.samples), dataloader):
-            xh = model(x)
-            xh[xh < 0] = 0
+        for x, _ in dataloader:
+            visualize(x, model)
+            break
+            
 
-            x = model.cover(x)
-            x_arr = x.view(3, 32, 32).permute(1, 2, 0).numpy()
-            axes[0].imshow(x_arr)
-            axes[0].set_title("Before")
-            xh_arr = xh.view(3, 32, 32).permute(1, 2, 0).numpy()
-            axes[1].imshow(xh_arr)
-            axes[1].set_title("After")
-            pyplot.title("Sample %d" % i)
-            fpath = "sample%d.png" % i
-            print("Saving %s..." % fpath)
-            pyplot.savefig(fpath, bbox_inches="tight")
+
+def visualize(x, model):
+    global FIG
+    global AXE
+    
+    if FIG is None:
+        FIG, AXE = pyplot.subplots(ncols=2)
+    
+    xh = model(x)
+    xh[xh < 0] = 0
+
+    x = model.cover(x)
+    x_arr = x.view(3, 32, 32).permute(1, 2, 0).numpy()
+    AXE[0].imshow(x_arr)
+    AXE[0].set_title("Before")
+    xh_arr = xh.view(3, 32, 32).permute(1, 2, 0).numpy()
+    AXE[1].imshow(xh_arr)
+    AXE[1].set_title("After")
+    pyplot.suptitle("Sample %d" % i)
+    fpath = "sample%d.png" % i
+    print("Saving %s..." % fpath)
+    pyplot.savefig(fpath, bbox_inches="tight")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

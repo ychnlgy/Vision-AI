@@ -67,24 +67,21 @@ class Unet(vision_ai.models.Unet):
             ],
             shortcuts = [
                 torch.nn.Sequential(
-                    torch.nn.ReLU(),
-                    torch.nn.Conv2d(128 + 32, 128, 1, bias=False),
-                    torch.nn.BatchNorm2d(128)
+                    torch.nn.BatchNorm2d(128 + 32),
+                    torch.nn.Conv2d(128 + 32, 128, 1, bias=False)
                 ),
                 torch.nn.Sequential(
-                    torch.nn.ReLU(),
-                    torch.nn.Conv2d(128 + 64, 128, 1, bias=False),
-                    torch.nn.BatchNorm2d(128)
+                    torch.nn.BatchNorm2d(128 + 64),
+                    torch.nn.Conv2d(128 + 64, 128, 1, bias=False)
                 ),
                 torch.nn.Sequential(
-                    torch.nn.ReLU(),
-                    torch.nn.Conv2d(256 + 128, 128, 1, bias=False),
-                    torch.nn.BatchNorm2d(128)
+                    torch.nn.BatchNorm2d(256 + 128),
+                    torch.nn.Conv2d(256 + 128, 128, 1, bias=False)
                 )
             ]
         )
         self.tail = torch.nn.Sequential(
-            torch.nn.ReLU(),
+            torch.nn.BatchNorm2d(128),
             torch.nn.Conv2d(128, 3, 1, bias=False),
             torch.nn.Tanh()
         )
@@ -92,10 +89,12 @@ class Unet(vision_ai.models.Unet):
         self.box_h = box_h
     
     def forward(self, X):
-        if self.training:
-            X = self.cover(X)
+        X = self.cover(X)
         Xh = super().forward(X)
-        return self.tail(Xh)
+        Xh = self.tail(Xh)
+        if not self.training:
+            Xh = torch.nn.functional.relu(Xh)
+        return Xh
     
     def cover(self, X):
         X = X.clone()
