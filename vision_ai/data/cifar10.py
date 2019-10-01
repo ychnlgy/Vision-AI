@@ -3,6 +3,27 @@ import torchvision
 
 
 def get(root, download, batch_size, num_workers):
+    dataset, testset = get_data(root, download)
+    return create_loaders(batch_size, num_workers, dataset, testset)
+
+
+def create_loaders(batch_size, num_workers, dataset, testset):
+    data = torch.utils.data.DataLoader(
+        dataset,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=num_workers
+    )
+    test = torch.utils.data.DataLoader(
+        testset,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers
+    )
+    return data, test
+
+
+def get_data(root, download):
     dataset = torchvision.datasets.CIFAR10(
         root=root,
         train=True,
@@ -14,26 +35,10 @@ def get(root, download, batch_size, num_workers):
             torchvision.transforms.ToTensor()
         ])
     )
-
-    data = torch.utils.data.DataLoader(
-        dataset,
-        batch_size=batch_size,
-        shuffle=True,
-        num_workers=num_workers
-    )
-
     testset = torchvision.datasets.CIFAR10(
         root=root,
         train=False,
         download=download,
         transform=torchvision.transforms.ToTensor()
     )
-
-    test = torch.utils.data.DataLoader(
-        testset,
-        batch_size=batch_size,
-        shuffle=False,
-        num_workers=num_workers
-    )
-
-    return data, test
+    return dataset, testset

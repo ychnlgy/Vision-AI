@@ -11,16 +11,15 @@ import visualize_cifar10_unet
 def main(args):
     device = ["cpu", "cuda"][torch.cuda.is_available()]
 
-    dataloader, testloader = vision_ai.data.cifar10.get(
+    dataloader, testloader = vision_ai.data.cifar10_cover.get(
         root="~/torchvision-data",
         download=True,
         batch_size=args.batch_size,
-        num_workers=args.workers
+        num_workers=args.workers,
+        box=args.box
     )
 
-    cpu_model = unet_cifar10.Unet(
-        box_w=args.box_w, box_h=args.box_h
-    )
+    cpu_model = unet_cifar10.Unet()
     model = torch.nn.DataParallel(cpu_model).to(device)
     lossf = torch.nn.MSELoss(reduction="sum")
     optim = torch.optim.AdamW(
@@ -39,8 +38,8 @@ def main(args):
 
         avg = vision_ai.utils.MovingAvg(decay=0.95)
         with tqdm.tqdm(dataloader, ncols=80) as bar:
-            for x, y in bar:
-                x = x.to(device)
+            for _, xc, y in bar:
+                x = xc.to(device)
                 xh = model(x)
                 n = len(x)
                 loss = lossf(xh.view(n, -1), x.view(n, -1))/n
@@ -61,16 +60,15 @@ def main(args):
         acc = n = 0.0
         visualized = False
         with torch.no_grad():
-            for x, y in testloader:
+            for xr, xc, y in testloader:
                 
-                x = x.to(device)
+                x = xc.to(device)
                 xh = model(x)
                 
                 if save_cycle and not visualized:
                     visualized = True
                     visualize_cifar10_unet.visualize(
-                        x, xh, cpu_model.get_covered_input(),
-                        model, args.save_images
+                        xr, xh, xc, model, args.save_images
                     )
                 
                 b = len(x)
@@ -101,8 +99,7 @@ if __name__ == "__main__":
     parser.add_argument("--epochs", type=int, required=True)
     parser.add_argument("--lr", type=float, required=True)
     parser.add_argument("--l2_reg", type=float, required=True)
-    parser.add_argument("--box_w", type=int, required=True)
-    parser.add_argument("--box_h", type=int, required=True)
+    parser.add_argument("--box", type=int, required=True)
     
     # Committing to disk
     parser.add_argument("--save", required=True)

@@ -1,5 +1,3 @@
-import random
-
 import torch
 
 import vision_ai
@@ -7,7 +5,7 @@ import vision_ai
 
 class Unet(vision_ai.models.Unet):
 
-    def __init__(self, box_w, box_h):
+    def __init__(self):
         super().__init__(
             layers = [
                 # N, 32, 32, 32
@@ -85,26 +83,10 @@ class Unet(vision_ai.models.Unet):
             torch.nn.Conv2d(128, 3, 1, bias=False),
             torch.nn.Tanh()
         )
-        self.box_w = box_w
-        self.box_h = box_h
-        self._covered_X = None
     
     def forward(self, X):
-        self._covered_X = self.cover(X)
-        Xh = super().forward(self._covered_X)
+        Xh = super().forward(X)
         Xh = self.tail(Xh)
         if not self.training:
             Xh = torch.nn.functional.relu(Xh)
         return Xh
-    
-    def get_covered_input(self):
-        return self._covered_X
-    
-    def cover(self, X):
-        X = X.clone()
-        N, C, W, H = X.size()
-        for i in range(N):
-            x = random.randint(0, W - self.box_w)
-            y = random.randint(0, H - self.box_h)
-            X[i, :, x:x + self.box_w, y:y + self.box_h] = 0.0
-        return X
