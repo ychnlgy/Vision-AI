@@ -39,14 +39,14 @@ def main(args):
             
 
 
-def visualize(X, Xh, model):
+def visualize(X, Xh, model, n):
     global FIG
     global AXE
     
     if FIG is None:
         FIG, AXE = pyplot.subplots(ncols=2)
 
-    for x, xh in zip(X, Xh):
+    for i, x, xh in zip(range(n), X, Xh):
         x = model.cover(x)
         x_arr = x.view(3, 32, 32).permute(1, 2, 0).numpy()
         AXE[0].imshow(x_arr)

@@ -69,7 +69,7 @@ def main(args):
                 
                 if save_cycle and not visualized:
                     visualized = True
-                    visualize_cifar10_unet.visualize(x, xh, model)
+                    visualize_cifar10_unet.visualize(x, xh, model, args.save_images)
                 
                 b = len(x)
                 acc += lossf(xh.view(b, -1), x.view(b, -1)).item()
@@ -103,6 +103,7 @@ if __name__ == "__main__":
     # Committing to disk
     parser.add_argument("--save", required=True)
     parser.add_argument("--save_cycle", type=int, required=True)
+    parser.add_argument("--save_images", type=int, default=10)
     
     args = parser.parse_args()
     main(args)
