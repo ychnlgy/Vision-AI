@@ -44,15 +44,18 @@ def visualize(X, Xh, Xc, model, n):
     global AXE
     
     if FIG is None:
-        FIG, AXE = pyplot.subplots(ncols=2)
+        FIG, AXE = pyplot.subplots(ncols=3)
 
     for i, x, xh, xc in zip(range(n), X, Xh, Xc):
-        x_arr = xc.view(3, 32, 32).permute(1, 2, 0).cpu().numpy()
+        x_arr = x.view(3, 32, 32).permute(1, 2, 0).cpu().numpy()
         AXE[0].imshow(x_arr)
         AXE[0].set_title("Before")
+        xc_arr = xc.view(3, 32, 32).permute(1, 2, 0).cpu().numpy()
+        AXE[1].imshow(xc_arr)
+        AXE[1].set_title("Covered")
         xh_arr = xh.view(3, 32, 32).permute(1, 2, 0).cpu().numpy()
-        AXE[1].imshow(xh_arr)
-        AXE[1].set_title("After")
+        AXE[2].imshow(xh_arr)
+        AXE[2].set_title("Reconstructed")
         pyplot.suptitle("Sample %d" % i)
         fpath = "sample%d.png" % i
         print("Saving %s..." % fpath)

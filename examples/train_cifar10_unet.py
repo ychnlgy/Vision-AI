@@ -19,7 +19,7 @@ def main(args):
     )
 
     cpu_model = unet_cifar10.Unet(
-        box_w=4, box_h=4
+        box_w=args.box_w, box_h=args.box_h
     )
     model = torch.nn.DataParallel(cpu_model).to(device)
     lossf = torch.nn.MSELoss(reduction="sum")
@@ -98,6 +98,8 @@ if __name__ == "__main__":
     parser.add_argument("--epochs", type=int, required=True)
     parser.add_argument("--lr", type=float, required=True)
     parser.add_argument("--l2_reg", type=float, required=True)
+    parser.add_argument("--box_w", type=int, required=True)
+    parser.add_argument("--box_h", type=int, required=True)
     
     # Committing to disk
     parser.add_argument("--save", required=True)
