@@ -33,10 +33,10 @@ def main(args):
 
             x = model.cover(x)
             x_arr = x.view(3, 32, 32).permute(1, 2, 0).numpy()
-            axes[0].plot(x_arr)
+            axes[0].imshow(x_arr)
             axes[0].set_title("Before")
             xh_arr = xh.view(3, 32, 32).permute(1, 2, 0).numpy()
-            axes[1].plot(xh_arr)
+            axes[1].imshow(xh_arr)
             axes[1].set_title("After")
             pyplot.title("Sample %d" % i)
             pyplot.savefig("sample%d.png" % i, bbox_inches="tight")
