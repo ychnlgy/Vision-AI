@@ -48,10 +48,10 @@ def visualize(X, Xh, model, n):
 
     for i, x, xh in zip(range(n), X, Xh):
         x = model.cover(x)
-        x_arr = x.view(3, 32, 32).permute(1, 2, 0).numpy()
+        x_arr = x.view(3, 32, 32).permute(1, 2, 0).cpu().numpy()
         AXE[0].imshow(x_arr)
         AXE[0].set_title("Before")
-        xh_arr = xh.view(3, 32, 32).permute(1, 2, 0).numpy()
+        xh_arr = xh.view(3, 32, 32).permute(1, 2, 0).cpu().numpy()
         AXE[1].imshow(xh_arr)
         AXE[1].set_title("After")
         pyplot.suptitle("Sample %d" % i)
