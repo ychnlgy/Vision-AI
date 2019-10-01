@@ -32,6 +32,7 @@ def main(args):
     with torch.no_grad():
         for i, (x, _) in zip(range(args.samples), dataloader):
             xh = model(x)
+            xh[xh < 0] = 0
 
             x = model.cover(x)
             x_arr = x.view(3, 32, 32).permute(1, 2, 0).numpy()
