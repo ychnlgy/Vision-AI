@@ -23,9 +23,10 @@ def main(args):
     )
     model = torch.nn.DataParallel(cpu_model).to(device)
     lossf = torch.nn.L1Loss(reduction="sum")
-    optim = torch.optim.AdamW(
+    optim = torch.optim.SGD(
         model.parameters(),
         lr=args.lr,
+        momentum=0.9,
         weight_decay=args.l2_reg
     )
 
