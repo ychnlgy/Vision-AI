@@ -19,7 +19,7 @@ def main(args):
         num_workers=1
     )
     
-    model = unet_cfar10.Unet(
+    model = unet_cifar10.Unet(
         box_w=args.box_w, box_h=args.box_h
     )
     
