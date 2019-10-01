@@ -7,7 +7,7 @@ import vision_ai
 
 class Unet(vision_ai.models.Unet):
 
-    def __init__(self, mask_w, mask_h):
+    def __init__(self, box_w, box_h):
         super().__init__(
             layers = [
                 # N, 32, 32, 32
