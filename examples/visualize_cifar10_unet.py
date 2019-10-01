@@ -34,21 +34,20 @@ def main(args):
     with torch.no_grad():
         for x, _ in dataloader:
             xh = model(x)
-            visualize(x, xh, model)
+            visualize(x, xh, model.cover(x), model, args.samples)
             break
             
 
 
-def visualize(X, Xh, model, n):
+def visualize(X, Xh, Xc, model, n):
     global FIG
     global AXE
     
     if FIG is None:
         FIG, AXE = pyplot.subplots(ncols=2)
 
-    for i, x, xh in zip(range(n), X, Xh):
-        x = model.cover(x)
-        x_arr = x.view(3, 32, 32).permute(1, 2, 0).cpu().numpy()
+    for i, x, xh, xc in zip(range(n), X, Xh, Xc):
+        x_arr = xc.view(3, 32, 32).permute(1, 2, 0).cpu().numpy()
         AXE[0].imshow(x_arr)
         AXE[0].set_title("Before")
         xh_arr = xh.view(3, 32, 32).permute(1, 2, 0).cpu().numpy()
