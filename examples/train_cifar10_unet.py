@@ -68,7 +68,10 @@ def main(args):
                 
                 if save_cycle and not visualized:
                     visualized = True
-                    visualize_cifar10_unet.visualize(x, xh, cpu_model.cover(x), model, args.save_images)
+                    visualize_cifar10_unet.visualize(
+                        x, xh, cpu_model.get_covered_input(),
+                        model, args.save_images
+                    )
                 
                 b = len(x)
                 acc += lossf(xh.view(b, -1), x.view(b, -1)).item()

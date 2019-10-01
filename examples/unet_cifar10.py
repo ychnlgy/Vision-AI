@@ -87,14 +87,18 @@ class Unet(vision_ai.models.Unet):
         )
         self.box_w = box_w
         self.box_h = box_h
+        self._covered_X = None
     
     def forward(self, X):
-        X = self.cover(X)
-        Xh = super().forward(X)
+        self._covered_X = self.cover(X)
+        Xh = super().forward(self._covered_X)
         Xh = self.tail(Xh)
         if not self.training:
             Xh = torch.nn.functional.relu(Xh)
         return Xh
+    
+    def get_covered_input(self):
+        return self._covered_X
     
     def cover(self, X):
         X = X.clone()
