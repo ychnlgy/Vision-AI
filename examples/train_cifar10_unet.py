@@ -18,9 +18,10 @@ def main(args):
         num_workers=args.workers
     )
 
-    model = torch.nn.DataParallel(unet_cifar10.Unet(
+    cpu_model = unet_cifar10.Unet(
         box_w=4, box_h=4
-    )).to(device)
+    )
+    model = torch.nn.DataParallel(cpu_model).to(device)
     lossf = torch.nn.L1Loss(reduction="sum")
     optim = torch.optim.AdamW(
         model.parameters(),
@@ -69,7 +70,7 @@ def main(args):
 
         if epoch >= args.save_cycle and not epoch % args.save_cycle:
             print("Saving model to %s..." % args.save)
-            torch.save(model.cpu().state_dict(), args.save)
+            torch.save(cpu_model.state_dict(), args.save)
 
 
 if __name__ == "__main__":
