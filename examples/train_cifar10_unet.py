@@ -6,7 +6,7 @@ import tqdm
 import vision_ai
 
 import unet_cifar10
-
+import visualize_cifar10_unet
 
 def main(args):
     device = ["cpu", "cuda"][torch.cuda.is_available()]
@@ -56,21 +56,35 @@ def main(args):
 
         model.eval()
 
-        acc = n = 0.0
+        save_cycle = (epoch >= args.save_cycle and not epoch % args.save_cycle)
 
+        acc = n = 0.0
+        visualized = False
         with torch.no_grad():
             for x, y in testloader:
+                
                 x = x.to(device)
                 xh = model(x)
+                
+                if save_cycle and not visualized:
+                    visualized = True
+                    visualize_cifar10_unet.visualize(x, xh, model)
+                
                 b = len(x)
                 acc += lossf(xh.view(b, -1), x.view(b, -1)).item()
                 n += b
 
         print("Epoch %d test L1-loss: %.2f" % (epoch, acc/n))
 
-        if epoch >= args.save_cycle and not epoch % args.save_cycle:
-            print("Saving model to %s..." % args.save)
-            torch.save(cpu_model.state_dict(), args.save)
+        if save_cycle:
+            save_model(cpu_model, args.save)
+    
+    save_model(cpu_model, args.save)
+
+
+def save_model(model, save_path):
+    print("Saving model to %s..." % save_path)
+    torch.save(model.state_dict(), save_path)
 
 
 if __name__ == "__main__":

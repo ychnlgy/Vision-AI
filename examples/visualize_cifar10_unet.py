@@ -33,32 +33,31 @@ def main(args):
     
     with torch.no_grad():
         for x, _ in dataloader:
-            visualize(x, model)
+            xh = model(x)
+            visualize(x, xh, model)
             break
             
 
 
-def visualize(x, model):
+def visualize(X, Xh, model):
     global FIG
     global AXE
     
     if FIG is None:
         FIG, AXE = pyplot.subplots(ncols=2)
-    
-    xh = model(x)
-    xh[xh < 0] = 0
 
-    x = model.cover(x)
-    x_arr = x.view(3, 32, 32).permute(1, 2, 0).numpy()
-    AXE[0].imshow(x_arr)
-    AXE[0].set_title("Before")
-    xh_arr = xh.view(3, 32, 32).permute(1, 2, 0).numpy()
-    AXE[1].imshow(xh_arr)
-    AXE[1].set_title("After")
-    pyplot.suptitle("Sample %d" % i)
-    fpath = "sample%d.png" % i
-    print("Saving %s..." % fpath)
-    pyplot.savefig(fpath, bbox_inches="tight")
+    for x, xh in zip(X, Xh):
+        x = model.cover(x)
+        x_arr = x.view(3, 32, 32).permute(1, 2, 0).numpy()
+        AXE[0].imshow(x_arr)
+        AXE[0].set_title("Before")
+        xh_arr = xh.view(3, 32, 32).permute(1, 2, 0).numpy()
+        AXE[1].imshow(xh_arr)
+        AXE[1].set_title("After")
+        pyplot.suptitle("Sample %d" % i)
+        fpath = "sample%d.png" % i
+        print("Saving %s..." % fpath)
+        pyplot.savefig(fpath, bbox_inches="tight")
 
 
 if __name__ == "__main__":
