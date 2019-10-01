@@ -23,7 +23,7 @@ def main(args):
         box_w=args.box_w, box_h=args.box_h
     )
     
-    model.load_state_dict(torch.load(args.save))
+    model.load_state_dict(torch.load(args.save, map_location="cpu"))
     
     model.train()
     
