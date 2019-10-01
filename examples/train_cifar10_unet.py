@@ -18,7 +18,9 @@ def main(args):
         num_workers=args.workers
     )
 
-    model = torch.nn.DataParallel(unet_cifar10.Unet()).to(device)
+    model = torch.nn.DataParallel(unet_cifar10.Unet(
+        box_w=4, box_h=4
+    )).to(device)
     lossf = torch.nn.L1Loss()
     optim = torch.optim.AdamW(
         model.parameters(),
@@ -63,7 +65,8 @@ def main(args):
 
         print("Epoch %d test L1-loss: %.2f" % (epoch, acc/n*100.0))
 
-        if epoch > args.save_cycle:
+        if epoch >= args.save_cycle and not epoch % args.save_cycle:
+            print("Saving model to %s..." % args.save)
             torch.save(model.cpu().state_dict(), args.save)
 
 
