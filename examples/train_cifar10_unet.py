@@ -22,7 +22,7 @@ def main(args):
         box_w=4, box_h=4
     )
     model = torch.nn.DataParallel(cpu_model).to(device)
-    lossf = torch.nn.L1Loss(reduction="sum")
+    lossf = torch.nn.MSELoss(reduction="sum")
     optim = torch.optim.SGD(
         model.parameters(),
         lr=args.lr,
@@ -75,7 +75,7 @@ def main(args):
                 acc += lossf(xh.view(b, -1), x.view(b, -1)).item()
                 n += b
 
-        print("Epoch %d test L1-loss: %.2f" % (epoch, acc/n))
+        print("Epoch %d test L2-loss: %.2f" % (epoch, acc/n))
 
         if save_cycle:
             save_model(cpu_model, args.save)
