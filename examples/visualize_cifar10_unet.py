@@ -23,6 +23,8 @@ def main(args):
         box_w=args.box_w, box_h=args.box_h
     )
     
+    model.load_state_dict(torch.load(args.save))
+    
     model.train()
     
     fig, axes = pyplot.subplots(ncols=2)
@@ -39,12 +41,15 @@ def main(args):
             axes[1].imshow(xh_arr)
             axes[1].set_title("After")
             pyplot.title("Sample %d" % i)
-            pyplot.savefig("sample%d.png" % i, bbox_inches="tight")
+            fpath = "sample%d.png" % i
+            print("Saving %s..." % fpath)
+            pyplot.savefig(fpath, bbox_inches="tight")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--box_w", type=int, required=True)
     parser.add_argument("--box_h", type=int, required=True)
     parser.add_argument("--samples", type=int, required=True)
+    parser.add_argument("--save", required=True)
     args = parser.parse_args()
     main(args)
