@@ -41,7 +41,7 @@ def main(args):
             for x, y in bar:
                 x = x.to(device)
                 xh = model(x)
-                n = x.size(0)
+                n = len(x)
                 loss = lossf(xh.view(n, -1), x.view(n, -1))/n
 
                 optim.zero_grad()
@@ -61,9 +61,9 @@ def main(args):
             for x, y in testloader:
                 x = x.to(device)
                 xh = model(x)
-                b = x.size(0)
+                b = len(x)
                 acc += lossf(xh.view(b, -1), x.view(b, -1)).item()
-                n += len(x)
+                n += b
 
         print("Epoch %d test L1-loss: %.2f" % (epoch, acc/n*100.0))
 
