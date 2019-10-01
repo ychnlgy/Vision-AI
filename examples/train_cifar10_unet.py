@@ -19,7 +19,7 @@ def main(args):
     )
 
     model = torch.nn.DataParallel(unet_cifar10.Unet()).to(device)
-    lossf = torch.nn.L1Loss(reduction="sum")
+    lossf = torch.nn.L1Loss()
     optim = torch.optim.AdamW(
         model.parameters(),
         lr=args.lr,
@@ -38,7 +38,8 @@ def main(args):
             for x, y in bar:
                 x = x.to(device)
                 xh = model(x)
-                loss = lossf(xh, x)
+                n = x.size(0)
+                loss = lossf(xh.view(n, -1), x.view(n, -1))
 
                 optim.zero_grad()
                 loss.backward()
@@ -56,10 +57,11 @@ def main(args):
             for x, y in testloader:
                 x = x.to(device)
                 xh = model(x)
-                acc += lossf(xh, x).item()
-                n += 1
+                b = x.size(0)
+                acc += lossf(xh.view(b, -1), x.view(b, -1)).item()
+                n += len(x)
 
-        print("Epoch %d test accuracy: %.2f%%" % (epoch, acc/n*100.0))
+        print("Epoch %d test L1-loss: %.2f" % (epoch, acc/n*100.0))
 
         if epoch > args.save_cycle:
             torch.save(model.cpu().state_dict(), args.save)

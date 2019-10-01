@@ -1,3 +1,5 @@
+import random
+
 import torch
 
 import vision_ai
@@ -5,7 +7,7 @@ import vision_ai
 
 class Unet(vision_ai.models.Unet):
 
-    def __init__(self):
+    def __init__(self, mask_w, mask_h):
         super().__init__(
             layers = [
                 # N, 32, 32, 32
@@ -86,7 +88,20 @@ class Unet(vision_ai.models.Unet):
             torch.nn.Conv2d(128, 3, 1, bias=False),
             torch.nn.Tanh()
         )
+        self.box_w = box_w
+        self.box_h = box_h
     
     def forward(self, X):
+        if self.training:
+            X = self.cover(X)
         Xh = super().forward(X)
         return self.tail(Xh)
+    
+    def cover(self, X):
+        X = X.clone()
+        N, C, W, H = X.size()
+        for i in range(N):
+            x = random.randint(0, W - self.box_w)
+            y = random.randint(0, H - self.box_h)
+            X[i, :, x:x + self.box_w, y:y + self.box_h] = 0.0
+        return X
