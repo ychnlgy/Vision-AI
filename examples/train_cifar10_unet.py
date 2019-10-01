@@ -21,7 +21,7 @@ def main(args):
     model = torch.nn.DataParallel(unet_cifar10.Unet(
         box_w=4, box_h=4
     )).to(device)
-    lossf = torch.nn.L1Loss()
+    lossf = torch.nn.L1Loss(reduction="sum")
     optim = torch.optim.AdamW(
         model.parameters(),
         lr=args.lr,
@@ -41,7 +41,7 @@ def main(args):
                 x = x.to(device)
                 xh = model(x)
                 n = x.size(0)
-                loss = lossf(xh.view(n, -1), x.view(n, -1))
+                loss = lossf(xh.view(n, -1), x.view(n, -1))/n
 
                 optim.zero_grad()
                 loss.backward()
