@@ -66,7 +66,7 @@ def main(args):
                 acc += lossf(xh.view(b, -1), x.view(b, -1)).item()
                 n += b
 
-        print("Epoch %d test L1-loss: %.2f" % (epoch, acc/n*100.0))
+        print("Epoch %d test L1-loss: %.2f" % (epoch, acc))
 
         if epoch >= args.save_cycle and not epoch % args.save_cycle:
             print("Saving model to %s..." % args.save)
