@@ -36,6 +36,7 @@ def main(args):
 
         model.train()
 
+        avg = vision_ai.utils.MovingAvg(decay=0.95)
         with tqdm.tqdm(dataloader, ncols=80) as bar:
             for x, y in bar:
                 x = x.to(device)
@@ -47,7 +48,8 @@ def main(args):
                 loss.backward()
                 optim.step()
 
-                bar.set_description("Loss: %.4f" % loss.item())
+                avg.update(loss.item())
+                bar.set_description("Loss: %.4f" % avg.peek())
 
         sched.step()
 
