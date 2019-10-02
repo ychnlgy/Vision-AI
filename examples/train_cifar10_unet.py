@@ -38,9 +38,9 @@ def main(args):
 
         avg = vision_ai.utils.MovingAvg(decay=0.95)
         with tqdm.tqdm(dataloader, ncols=80) as bar:
-            for _, xc, y in bar:
-                x = xc.to(device)
-                xh = model(x)
+            for x, xc, y in bar:
+                xc = xc.to(device)
+                xh = model(xc)
                 n = len(x)
                 loss = lossf(xh.view(n, -1), x.view(n, -1))/n
 
@@ -62,8 +62,8 @@ def main(args):
         with torch.no_grad():
             for xr, xc, y in testloader:
                 
-                x = xc.to(device)
-                xh = model(x)
+                xc = xc.to(device)
+                xh = model(xc)
                 
                 if save_cycle and not visualized:
                     visualized = True
@@ -72,7 +72,7 @@ def main(args):
                     )
                 
                 b = len(x)
-                acc += lossf(xh.view(b, -1), x.view(b, -1)).item()
+                acc += lossf(xh.view(b, -1), xr.view(b, -1)).item()
                 n += b
 
         print("Epoch %d test L2-loss: %.2f" % (epoch, acc/n))
