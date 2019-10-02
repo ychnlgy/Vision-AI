@@ -73,7 +73,7 @@ def main(args):
                         xr, xh, xc, model, args.save_images
                     )
                 
-                b = len(x)
+                b = len(xr)
                 acc += lossf(xh.view(b, -1), xr.view(b, -1)).item()
                 n += b
 
