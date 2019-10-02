@@ -62,7 +62,7 @@ def get_data(root, download):
     testset = torchvision.datasets.STL10(
         root=root,
         split="test",
-        transform=torch.transforms.ToTensor(),
+        transform=torchvision.transforms.ToTensor(),
         download=download
     )
 
