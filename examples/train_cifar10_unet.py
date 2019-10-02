@@ -39,11 +39,12 @@ def main(args):
 
         avg = vision_ai.utils.MovingAvg(decay=0.95)
         with tqdm.tqdm(dataloader, ncols=80) as bar:
-            for x, xc, y in bar:
+            for xr, xc, y in bar:
+                xr = xr.to(device)
                 xc = xc.to(device)
                 xh = model(xc)
-                n = len(x)
-                loss = lossf(xh.view(n, -1), x.view(n, -1))/n
+                n = len(xr)
+                loss = lossf(xh.view(n, -1), xr.view(n, -1))/n
 
                 optim.zero_grad()
                 loss.backward()
@@ -62,7 +63,7 @@ def main(args):
         visualized = False
         with torch.no_grad():
             for xr, xc, y in testloader:
-                
+                xr = xr.to(device)
                 xc = xc.to(device)
                 xh = model(xc)
                 
