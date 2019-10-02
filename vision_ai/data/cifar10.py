@@ -7,7 +7,7 @@ def get(root, download, batch_size, num_workers):
     return create_loaders(batch_size, num_workers, dataset, testset)
 
 
-def create_loaders(batch_size, num_workers, dataset, testset):
+def create_loaders(batch_size, num_workers, dataset, testset, shuffle_test=False):
     data = torch.utils.data.DataLoader(
         dataset,
         batch_size=batch_size,
@@ -17,7 +17,7 @@ def create_loaders(batch_size, num_workers, dataset, testset):
     test = torch.utils.data.DataLoader(
         testset,
         batch_size=batch_size,
-        shuffle=False,
+        shuffle=shuffle_test,
         num_workers=num_workers
     )
     return data, test

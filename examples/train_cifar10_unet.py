@@ -16,7 +16,8 @@ def main(args):
         download=True,
         batch_size=args.batch_size,
         num_workers=args.workers,
-        box=args.box
+        box=args.box,
+        shuffle_test=True
     )
 
     cpu_model = unet_cifar10.Unet()
