@@ -18,6 +18,7 @@ def main(args):
         num_workers=8
     )
     
+    unet.eval()
     with torch.no_grad():
         for x, y in dataset:
             xh = unet(x)
