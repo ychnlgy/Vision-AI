@@ -54,9 +54,8 @@ def main(args):
     model = torch.nn.DataParallel(cpu_model).to(device)
     
     lossf = torch.nn.CrossEntropyLoss()
-    optim = torch.optim.SGD(
+    optim = torch.optim.AdamW(
         model.parameters(),
-        momentum=0.9,
         lr=args.lr,
         weight_decay=args.l2_reg
     )
