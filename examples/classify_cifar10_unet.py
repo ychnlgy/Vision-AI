@@ -4,7 +4,7 @@ import sys
 import torch
 import tqdm
 
-import model_cifar10
+import model_cifar10_large
 import unet_cifar10
 import vision_ai
 
@@ -44,10 +44,7 @@ def main(args):
     cpu_model = Classifier(
         unet,
         args.tune,
-        tail=torch.nn.Sequential(
-            torch.nn.BatchNorm2d(128),
-            model_cifar10.Model(channels=128)
-        )
+        tail=model_cifar10_large.Model(channels=128)
     )
     
     model = torch.nn.DataParallel(cpu_model).to(device)
