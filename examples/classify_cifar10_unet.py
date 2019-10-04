@@ -45,7 +45,7 @@ def main(args):
         unet,
         args.tune,
         tail=torch.nn.Sequential(
-            torch.nn.BatchNorm(128),
+            torch.nn.BatchNorm2d(128),
             torch.nn.Conv2d(128, 10, 1),
             torch.nn.AdaptiveAvgPool2d(1)
         )
