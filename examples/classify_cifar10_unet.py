@@ -64,7 +64,7 @@ def main(args):
         
         model.train()
         
-        avg = visual_ai.utils.MovingAvg(0.95)
+        avg = vision_ai.utils.MovingAvg(0.95)
         
         with tqdm.tqdm(dataset, ncols=80) as bar:
             for x, y in bar:
