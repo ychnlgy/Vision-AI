@@ -12,6 +12,7 @@ class Classifier(torch.nn.Module):
     def __init__(self, unet, tune, tail):
         super().__init__()
         self.unet = unet
+        self.unet.tail = torch.nn.Sequential()
         self.tune = tune
         self.tail = tail
     
