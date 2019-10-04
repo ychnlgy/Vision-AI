@@ -30,7 +30,7 @@ def main(args):
     
     device = ["cpu", "cuda"][torch.cuda.is_available()]
     
-    dataset, testset = visual_ai.data.cifar10.get(
+    dataset, testset = vision_ai.data.cifar10.get(
         root="~/torchvision-data",
         download=args.download,
         batch_size=128,
