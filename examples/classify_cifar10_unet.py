@@ -40,14 +40,16 @@ def main(args):
     unet = unet_cifar10.Unet()
     unet.load_state_dict(torch.load(args.prev_save, map_location="cpu"))
     
-    model = Classifier(
+    cpu_model = Classifier(
         unet,
         args.tune,
         tail=torch.nn.Sequential(
             torch.nn.Conv2d(128, 10, 1),
             torch.nn.AdaptiveAvgPool2d(1)
         )
-    ).to(device)
+    )
+    
+    model = torch.nn.DataParallel(cpu_model).to(device)
     
     lossf = torch.nn.CrossEntropyLoss()
     optim = torch.optim.SGD(
@@ -93,6 +95,11 @@ def main(args):
         
         sys.stderr.write("Test accuracy: %.2f%%\n" % (acc/n*100.0))
         sys.stderr.flush()
+    
+    sys.stderr.write("Saving to %s..." % args.save)
+    sys.stderr.flush()
+    
+    torch.save(cpu_model.state_dict(), args.save)
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
