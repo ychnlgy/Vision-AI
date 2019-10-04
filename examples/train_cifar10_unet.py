@@ -70,7 +70,7 @@ def main(args):
                 if save_cycle and not visualized:
                     visualized = True
                     visualize_cifar10_unet.visualize(
-                        xr, xh, xc, model, args.save_images
+                        xr, xh, xc, args.save_images
                     )
                 
                 b = len(xr)

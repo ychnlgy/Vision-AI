@@ -34,12 +34,12 @@ def main(args):
     with torch.no_grad():
         for x, _ in dataloader:
             xh = model(x)
-            visualize(x, xh, model.cover(x), model, args.samples)
+            visualize(x, xh, model.cover(x), args.samples)
             break
             
 
 
-def visualize(X, Xh, Xc, model, n):
+def visualize(X, Xh, Xc, n):
     global FIG
     global AXE
     
