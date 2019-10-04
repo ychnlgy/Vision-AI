@@ -5,7 +5,7 @@ import torch
 import tqdm
 
 import unet_cifar10
-import visual_ai
+import vision_ai
 
 class Classifier(torch.nn.Module):
     
