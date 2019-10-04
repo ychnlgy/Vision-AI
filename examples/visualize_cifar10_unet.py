@@ -51,6 +51,7 @@ def visualize(X, Xh, Xc, n):
         AXE[0].imshow(x_arr)
         AXE[0].set_title("Before")
         xc_arr = xc.view(3, 32, 32).permute(1, 2, 0).cpu().numpy()
+        xc_arr[xc_arr < 0] = 0
         AXE[1].imshow(xc_arr)
         AXE[1].set_title("Covered")
         xh_arr = xh.view(3, 32, 32).permute(1, 2, 0).cpu().numpy()
