@@ -88,7 +88,7 @@ def main(args):
         
         with torch.no_grad():
             
-            for x, y in testset:
+            for x, y in dataset:
                 x = x.to(device)
                 y = y.to(device)
                 yh = model(x)
