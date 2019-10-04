@@ -15,7 +15,12 @@ class Classifier(torch.nn.Module):
         self.unet = unet
         self.unet.tail = torch.nn.Sequential()
         self.tune = tune
-        self.tail = tail
+        self.tail = torch.nn.Sequential(
+            torch.nn.BatchNorm2d(128),
+            torch.nn.Conv2d(128, 128, 1),
+            torch.nn.ReLU(),
+            tail
+        )
     
     def forward(self, X):
         N = len(X)
