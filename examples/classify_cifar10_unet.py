@@ -104,7 +104,7 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     
-    parser.add_argument("--download", type=int, dedfault=0)
+    parser.add_argument("--download", type=int, default=0)
     
     parser.add_argument("--prev_save", required=True)
     parser.add_argument("--tune", type=int, required=True)
