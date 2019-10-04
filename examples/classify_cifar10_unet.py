@@ -17,7 +17,7 @@ class Classifier(torch.nn.Module):
     
     def forward(self, X):
         N = len(X)
-        if tune:
+        if self.tune:
             X = self.unet(X)
         else:
             with torch.no_grad():
