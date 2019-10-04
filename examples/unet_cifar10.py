@@ -87,6 +87,4 @@ class Unet(vision_ai.models.Unet):
     def forward(self, X):
         Xh = super().forward(X)
         Xh = self.tail(Xh)
-        if not self.training:
-            Xh = torch.nn.functional.relu(Xh)
         return Xh
