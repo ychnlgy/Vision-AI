@@ -18,10 +18,11 @@ def main(args):
         num_workers=8
     )
     
-    for x, y in dataset:
-        xh = unet(x)
-        visualize_cifar10_unet.visualize(x, xh, x, n=10)
-        break
+    with torch.no_grad():
+        for x, y in dataset:
+            xh = unet(x)
+            visualize_cifar10_unet.visualize(x, xh, x, n=10)
+            break
     
     print("Done.")
 
