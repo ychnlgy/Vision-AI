@@ -24,8 +24,7 @@ class Classifier(torch.nn.Module):
         else:
             with torch.no_grad():
                 X = self.unet(X).clone().detach()
-        classification = self.tail(X)
-        return classification.view(N, classification.size(1))
+        return self.tail(X).squeeze()
 
 
 def main(args):
