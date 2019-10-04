@@ -92,7 +92,7 @@ def main(args):
                 x = x.to(device)
                 y = y.to(device)
                 yh = model(x)
-                acc = (yh.max(dim=1)[1] == y).long().sum().item()
+                acc += (yh.max(dim=1)[1] == y).long().sum().item()
                 n += len(y)
         
         sys.stderr.write("Test accuracy: %.2f%%\n" % (acc/n*100.0))
