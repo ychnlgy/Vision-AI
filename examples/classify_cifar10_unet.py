@@ -16,11 +16,6 @@ class Classifier(torch.nn.Module):
         self.unet.tail = torch.nn.Sequential()
         self.tune = tune
         self.tail = tail
-        
-        if tune:
-            self.unet.train()
-        else:
-            self.unet.eval()
     
     def forward(self, X):
         N = len(X)
@@ -50,7 +45,10 @@ def main(args):
     cpu_model = Classifier(
         unet,
         args.tune,
-        tail=model_cifar10.Model(channels=128)
+        tail=torch.nn.Sequential(
+            torch.nn.BatchNorm2d(128),
+            model_cifar10.Model(channels=128)
+        )
     )
     
     model = torch.nn.DataParallel(cpu_model).to(device)
