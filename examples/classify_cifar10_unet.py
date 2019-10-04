@@ -16,6 +16,11 @@ class Classifier(torch.nn.Module):
         self.unet.tail = torch.nn.Sequential()
         self.tune = tune
         self.tail = tail
+        
+        if tune:
+            self.unet.train()
+        else:
+            self.unet.eval()
     
     def forward(self, X):
         N = len(X)
@@ -51,9 +56,10 @@ def main(args):
     model = torch.nn.DataParallel(cpu_model).to(device)
     
     lossf = torch.nn.CrossEntropyLoss()
-    optim = torch.optim.AdamW(
+    optim = torch.optim.SGD(
         model.parameters(),
         lr=args.lr,
+        momentum=0.9,
         weight_decay=args.l2_reg
     )
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(optim, T_max=args.epochs)
