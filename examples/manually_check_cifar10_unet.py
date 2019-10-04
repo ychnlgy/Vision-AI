@@ -2,6 +2,7 @@ import argparse
 
 import torch
 
+import unet_cifar10
 import vision_ai
 import visualize_cifar10_unet
 
