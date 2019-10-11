@@ -21,7 +21,7 @@ def main(args):
         with open(args.test_data, 'rb') as f:
             test_path = pickle.load(f)
     else:
-        all_path = vision_ai.data.mvor.getImagePathFromJson(JsonFile, DATAPATH)
+        all_path = getImagePathFromJson(JsonFile, DATAPATH)
         train_path, test_path = splitset(all_path, args.split_percent)
 
     if args.save_train_data:
@@ -51,6 +51,7 @@ def main(args):
     )
     print('Training Start')
     for epoch in range(1, args.epochs + 1):
+	model.train()
         for x, y in train_loader:
             x = x.to(device)
             y = y.to(device)
@@ -68,6 +69,7 @@ def main(args):
 
         n = 0.0
         loss = 0.0
+	model.eval()
         with torch.no_grad():
             for x, y in test_loader:
                 x = x.to(device)
