@@ -37,7 +37,7 @@ def main(args):
     test_data_list, test_label_list = test_data.to_dataset()
     train_loader, test_loader = create_loaders(args.batch_size, args.workers, train_data_list,
                                                test_data_list, train_label_list, test_label_list)
-    cpu_model = Unet_Resnet50()
+    cpu_model = Unet_Resnet34()
     model = torch.nn.DataParallel(cpu_model).to(device)
     criterion = torch.nn.CrossEntropyLoss()
     optim = torch.optim.AdamW(
