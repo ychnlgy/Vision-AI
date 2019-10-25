@@ -31,9 +31,9 @@ def main(args):
         with open(args.save_test_data, 'wb') as f_test:
             pickle.dump(test_path, f_test, pickle.HIGHEST_PROTOCOL)
 
-    train_data = Mvordata(JsonFile, DATAPATH, train_path)
+    train_data = Mvordata(JsonFile, train_path)
     train_data_list, train_label_list = train_data.to_dataset()
-    test_data = Mvordata(JsonFile, DATAPATH, test_path)
+    test_data = Mvordata(JsonFile, test_path)
     test_data_list, test_label_list = test_data.to_dataset()
     train_loader, test_loader = create_loaders(args.batch_size, args.workers, train_data_list,
                                                test_data_list, train_label_list, test_label_list)
@@ -53,6 +53,7 @@ def main(args):
         for x, y in train_loader:
             x = x.to(device)
             y = y.to(device)
+            print(x.size())
             xh = model(x)
             xh = xh.permute(0, 2, 3, 1)
             # Resizing the outputs and label to caculate pixel wise softmax loss
