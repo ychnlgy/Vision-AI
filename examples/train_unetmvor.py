@@ -21,7 +21,7 @@ def main(args):
         with open(args.test_data, 'rb') as f:
             test_path = pickle.load(f)
     else:
-        all_path = vision_ai.data.mvor.getImagePathFromJson(JsonFile, DATAPATH)
+        all_path = getImagePathFromJson(JsonFile, DATAPATH)
         train_path, test_path = splitset(all_path, args.split_percent)
 
     if args.save_train_data:
