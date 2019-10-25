@@ -3,11 +3,9 @@ import torch
 import tqdm
 import random
 import pickle
-import vision_ai 
-from unet_mvor import *
+import vision_ai
+from resnet50 import *
 from mvordata import *
-
-
 
 
 def main(args):
@@ -32,14 +30,14 @@ def main(args):
         print('here')
         with open(args.save_test_data, 'wb') as f_test:
             pickle.dump(test_path, f_test, pickle.HIGHEST_PROTOCOL)
-    
+
     train_data = Mvordata(JsonFile, DATAPATH, train_path)
     train_data_list, train_label_list = train_data.to_dataset()
     test_data = Mvordata(JsonFile, DATAPATH, test_path)
     test_data_list, test_label_list = test_data.to_dataset()
     train_loader, test_loader = create_loaders(args.batch_size, args.workers, train_data_list,
                                                test_data_list, train_label_list, test_label_list)
-    cpu_model = Unet_Mvor()
+    cpu_model = Unet_Resnet50()
     model = torch.nn.DataParallel(cpu_model).to(device)
     criterion = torch.nn.CrossEntropyLoss()
     optim = torch.optim.AdamW(
@@ -79,7 +77,7 @@ def main(args):
                 y = y.view(-1)
                 loss += criterion(outputs, y)
                 n += len(x)
-        print('epoch {} test loss: {}'.format(epoch, loss/n))
+        print('epoch {} test loss: {}'.format(epoch, loss / n))
 
     save_model(cpu_model, args.save)
 
