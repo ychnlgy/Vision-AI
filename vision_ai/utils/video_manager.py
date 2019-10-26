@@ -46,7 +46,7 @@ class VideoParser:
         out = []
         while ret and self._cap is not None:
             ret, frame = self._cap.read()
-            if not state % self._fps:
+            if ret and not state % self._fps:
                 yield frame
             state += int(ret)
         self.destroy()
