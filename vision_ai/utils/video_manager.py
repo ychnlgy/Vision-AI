@@ -1,6 +1,7 @@
 import cv2
 import numpy
 import tqdm
+import torch
 
 
 class VideoManager:
@@ -47,7 +48,9 @@ class VideoParser:
         while ret and self._cap is not None:
             ret, frame = self._cap.read()
             if ret and not state % self._fps:
-                yield frame
+                yield torch.from_numpy(
+                    frame
+                ).permute(2, 0, 1).unsqueeze(0)  # 1, C, W, H
             state += int(ret)
         self.destroy()
 
@@ -60,4 +63,4 @@ class VideoParser:
                 desc="Slicing %s per %d frames" % (self._pth, self._fps)
             )
         )
-        return numpy.stack(data, axis=0)
+        return torch.cat(data, axis=0)
