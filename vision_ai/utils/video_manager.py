@@ -60,4 +60,4 @@ class VideoParser:
                 desc="Slicing %s per %d frames" % (self._pth, self._fps)
             )
         )
-        return numpy.stack(data, dim=0)
+        return numpy.stack(data, axis=0)
