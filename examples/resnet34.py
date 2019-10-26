@@ -42,8 +42,7 @@ class Unet_Resnet34(vision_ai.models.Unet):
         )
         self.tail = torch.nn.Sequential(
             torch.nn.BatchNorm2d(128),
-            torch.nn.Conv2d(128, 2, 1, bias=False),
-            torch.nn.Tanh()
+            torch.nn.Conv2d(128, 2, 1, bias=False)
         )
 
     def forward(self, X):

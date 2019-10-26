@@ -4,7 +4,7 @@ import tqdm
 import random
 import pickle
 import vision_ai
-from resnet50 import *
+from resnet34 import *
 from mvordata import *
 
 
@@ -53,11 +53,10 @@ def main(args):
         for x, y in train_loader:
             x = x.to(device)
             y = y.to(device)
-            print(x.size())
             xh = model(x)
             xh = xh.permute(0, 2, 3, 1)
             # Resizing the outputs and label to caculate pixel wise softmax loss
-            outputs = xh.view(-1, 2)
+            outputs = xh.reshape(-1, 2)
             y = y.view(-1)
             loss = criterion(outputs, y)
             optim.zero_grad()
@@ -74,7 +73,7 @@ def main(args):
                 y = y.to(device)
                 xh = model(x)
                 xh = xh.permute(0, 2, 3, 1)
-                outputs = xh.view(-1, 2)
+                outputs = xh.reshape(-1, 2)
                 y = y.view(-1)
                 loss += criterion(outputs, y)
                 n += len(x)
