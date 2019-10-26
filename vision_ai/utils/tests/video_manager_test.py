@@ -34,7 +34,7 @@ def check3(data):
     return (
         (data == 0).long().sum() == 9,
         data[2, 1, 1] == 133,
-        data[1, 0, 0] == 255
+        data[1, 0, 0] == 255,
         data[0, 1, 0] == 80
     )
 
@@ -43,8 +43,8 @@ def check4(data):
     return (
         (data == 0).long().sum() == 6,
         data[2, 1, 1] == 133,
-        data[1, 0, 0] == 255
-        data[0, 1, 0] == 80
+        data[1, 0, 0] == 255,
+        data[0, 1, 0] == 80,
         (data[:, 0, 1] == 120).all()
     )
 
