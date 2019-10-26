@@ -50,7 +50,11 @@ class VideoParser:
             if ret and not state % self._fps:
                 yield torch.from_numpy(
                     frame
-                ).permute(2, 0, 1).unsqueeze(0)  # 1, C, W, H
+                ).permute(
+                    2, 0, 1
+                ).unsqueeze(
+                    0
+                )  # 1, C, W, H
             state += int(ret)
         self.destroy()
 

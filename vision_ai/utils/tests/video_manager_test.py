@@ -17,8 +17,8 @@ def check0(data):
 
 def check1(data):
     return (
-        (data == 0).long().sum() == 11 and
-        data[2, 1, 1] == 133
+        (data < 20).long().sum() == 11 and
+        data[2, 1, 1] == 123
     )
 
 
