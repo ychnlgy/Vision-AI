@@ -27,7 +27,7 @@ def process_all_files(root, skip_frames, skip_x, skip_y):
 def main(root, skip_frames, skip_x, skip_y, savef):
     with vision_ai.utils.ChunkFile(savef, "wb") as sfile:
         for data in process_all_files(root, skip_frames, skip_x, skip_y):
-            print("Chunk size: %s" % data.shape)
+            print("Chunk size: %d x %d x %d x %d" % data.shape)
             sfile.save(data)
 
 
