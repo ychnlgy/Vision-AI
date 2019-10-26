@@ -67,9 +67,10 @@ def test_skip_2_frames():
         for i in range(REPEATS):
             with manager.parse(DATA) as parser:
                 data = parser.read()
-                assert data.shape == (2, 3, 2, 2)
+                assert data.shape == (3, 3, 2, 2)
                 assert check0(data[0])
                 assert check2(data[1])
+                assert check4(data[2])
 
 
 def test_skip_3_frames():
