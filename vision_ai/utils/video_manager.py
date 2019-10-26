@@ -1,3 +1,4 @@
+import os
 import math
 
 import cv2
@@ -66,7 +67,7 @@ class VideoParser:
                 iter(self),
                 ncols=80,
                 total=len(self),
-                desc="Slicing %s per %d frames" % (self._pth, self._fps)
+                desc="Slicing %s per %d frames" % (os.path.basename(self._pth), self._fps)
             )
         )
         return torch.cat(data, axis=0)
