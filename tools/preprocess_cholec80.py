@@ -20,7 +20,7 @@ def process_single_file(fpath, manager, skip_x, skip_y):
 
 def process_all_files(root, skip_frames, skip_x, skip_y):
     with vision_ai.utils.VideoManager(skip_frames) as manager:
-        for fpath in colllect_mp4s(root):
+        for fpath in collect_mp4s(root):
             yield process_single_file(fpath, manager, skip_x, skip_y)
 
 
