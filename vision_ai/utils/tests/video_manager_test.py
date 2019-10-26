@@ -16,6 +16,8 @@ def check0(data):
 
 
 def check1(data):
+    print((data < 20).long().sum() == 11)
+    print(data[2, 1, 1] == 123)
     return (
         (data < 20).long().sum() == 11 and
         data[2, 1, 1] == 123
