@@ -8,6 +8,8 @@ import random
 from PIL import Image
 from sklearn.model_selection import train_test_split
 import torchvision
+import pickle
+
 
 # root is the path to MVOR dataset
 def getAllImagePaths(root):
@@ -20,6 +22,25 @@ def getAllImagePaths(root):
         elif os.path.isfile(path) and os.path.splitext(path)[1] == '.png':
             imagePaths.append(path)
     return imagePaths
+
+
+def save_K_sample_fromday4(path_to_jsonfile, path_to_mvor_dataset, k, test_path, train_path):
+    all_path = getImagePathFromJson(path_to_jsonfile, path_to_mvor_dataset)
+    k_samples = []
+    left = all_path.copy()
+    for path in all_path:
+        if k <= 0:
+            break
+        else:
+            if 'day4' in path[0]:
+                k_samples.append(path)
+                left.remove(path)
+                k -= 1
+    with open(train_path, 'wb') as f_train:
+        pickle.dump(left, f_train, pickle.HIGHEST_PROTOCOL)
+    with open(test_path, 'wb') as f_test:
+        pickle.dump(k_samples, f_test, pickle.HIGHEST_PROTOCOL)
+    print('{} samples from day 4 created and saved as pickle'.format(len(k_samples)))
 
 
 def getImagePathFromJson(path_to_jsonfile, path_to_mvor_dataset):
@@ -98,20 +119,24 @@ def create_loaders(batch_size, num_workers, X_train, X_test, y_train, y_test, sh
     print('Data Loader Created')
     return train_loader, test_loader
 
+
 if __name__ == '__main__':
+    # DATAPATH = "../../mvor-master/dataset"
+    # JsonFile = "../../mvor-master/annotations/camma_mvor_2018.json"
+    # all_path = getImagePathFromJson(JsonFile, DATAPATH)
+    # train_path, test_path = splitset(all_path, 0.2)
+    #
+    # train_data = Mvordata(JsonFile, train_path)
+    # train_data_list, train_label_list = train_data.to_dataset()
+    #
+    # test_data = Mvordata(JsonFile, test_path)
+    # test_data_list, test_label_list = test_data.to_dataset()
+    #
+    # train_loader, test_loader = create_loaders(2, 0, train_data_list, test_data_list, train_label_list, test_label_list)
+
     DATAPATH = "../../mvor-master/dataset"
     JsonFile = "../../mvor-master/annotations/camma_mvor_2018.json"
-    all_path = getImagePathFromJson(JsonFile, DATAPATH)
-    train_path, test_path = splitset(all_path, 0.2)
-
-    train_data = Mvordata(JsonFile, train_path)
-    train_data_list, train_label_list = train_data.to_dataset()
-
-    test_data = Mvordata(JsonFile, test_path)
-    test_data_list, test_label_list = test_data.to_dataset()
-
-    train_loader, test_loader = create_loaders(2, 0, train_data_list, test_data_list, train_label_list, test_label_list)
-
+    save_K_sample_fromday4(JsonFile, DATAPATH, 500, 'day4_test.pickle', 'day4_train.pickle')
 
 
 

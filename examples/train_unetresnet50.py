@@ -23,11 +23,9 @@ def main(args):
         train_path, test_path = splitset(all_path, args.split_percent)
 
     if args.save_train_data:
-        print('here')
         with open(args.save_train_data, 'wb') as f_train:
             pickle.dump(train_path, f_train, pickle.HIGHEST_PROTOCOL)
     if args.save_test_data:
-        print('here')
         with open(args.save_test_data, 'wb') as f_test:
             pickle.dump(test_path, f_test, pickle.HIGHEST_PROTOCOL)
 
