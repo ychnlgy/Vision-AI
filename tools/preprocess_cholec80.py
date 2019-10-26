@@ -8,7 +8,7 @@ HEIGHT = 854
 
 
 def collect_mp4s(root):
-    return sorted(list(pathlib.Path(root).rglob("*.mp4")))
+    return sorted(list(map(str, pathlib.Path(root).rglob("*.mp4"))))
 
 
 def process_single_file(fpath, manager, skip_x, skip_y):
