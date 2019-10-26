@@ -39,7 +39,7 @@ class VideoParser:
             self._cap = None
 
     def __len__(self):
-        return self._len
+        return math.ceil(self._len / self._fps)
 
     def __iter__(self):
         ret = True
