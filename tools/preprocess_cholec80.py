@@ -39,7 +39,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     
     parser.add_argument("--root", required=True)
-    parser.add_argument("--skip_frames", type=int, default=50)
+    parser.add_argument("--skip_frames", type=int, default=100)
     parser.add_argument("--skip_x", type=int, default=2)
     parser.add_argument("--skip_y", type=int, default=3)
     parser.add_argument("--savef", default="sliced_cholec80.pkl")

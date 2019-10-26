@@ -15,7 +15,6 @@ class ChunkFile:
         return self
     
     def __exit__(self, *args):
-        self._file.flush()
         self._file.close()
     
     def save(self, data):
