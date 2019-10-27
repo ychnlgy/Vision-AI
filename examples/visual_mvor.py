@@ -126,12 +126,12 @@ def cutout_human(depth, pred_box, thickness, filter_size, threshold):
 
 def cutout_human_tensor(depth, pred_box, thickness, threshold, conv):
     device = conv.weight.device
-    depth = torch.from_numpy(depth).to(device)
-    pred_box = torch.from_numpy(pred_box).to(device)
+    depth = torch.from_numpy(depth.astype(float)).to(device)
+    pred_box = torch.from_numpy(pred_box.astype(float)).to(device)
     mean = conv(depth)
-    out = depth.float() * pred_box.float()
-    final_mask = (out - mean).abs() < thickness
-    out[mean > threshold] *= final_mask.float()
+    out = depth * pred_box
+    mask = (out - mean).abs() < thickness
+    out[mean > threshold] *= mask.float()
     out[mean <=threshold] = 0
     return out > 0
 
