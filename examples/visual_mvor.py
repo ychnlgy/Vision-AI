@@ -23,7 +23,7 @@ def main(args):
         path = args.test_path
         JsonFile = args.json_file
         
-        fig, axes = plt.subplots(ncols=4, sharey=True)
+        fig, axes = plt.subplots(ncols=4, sharey=True, figsize=(10, 6))
         
         with torch.no_grad():
                 with open(path, 'rb') as f:
