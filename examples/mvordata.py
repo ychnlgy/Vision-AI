@@ -134,9 +134,13 @@ if __name__ == '__main__':
     #
     # train_loader, test_loader = create_loaders(2, 0, train_data_list, test_data_list, train_label_list, test_label_list)
 
-    DATAPATH = "../../mvor-master/dataset"
-    JsonFile = "../../mvor-master/annotations/camma_mvor_2018.json"
-    save_K_sample_fromday4(JsonFile, DATAPATH, 500, 'day4_test.pickle', 'day4_train.pickle')
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--data_path", default="../../mvor-master/dataset")
+    parser.add_argument("--json_file", default="../../mvor-master/annotations/camma_mvor_2018.json"
+    args = parser.parse_args()
+
+    save_K_sample_fromday4(args.json_file, args.data_path, 500, 'day4_test.pickle', 'day4_train.pickle')
 
 
 
