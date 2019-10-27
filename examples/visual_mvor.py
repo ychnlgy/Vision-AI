@@ -127,7 +127,7 @@ def cutout_human(test_data, i, pred_box, thickness, filter_size, threshold):
                 if rest > threshold:
                     med = numpy.median(depth[xs, ys])
                     out[x, y] = float(abs(depth[x, y] - med) < thickness)
-    return depth * out.astype(depth.dtype)
+    return torch.from_numpy(depth * out.astype(depth.dtype)) > 0
 
 def cutout_human_tensor(test_data, i, pred_box, thickness, conv):
         path = test_data.image_paths[i][0].replace("color", "depth")
