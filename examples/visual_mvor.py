@@ -72,6 +72,8 @@ def main(args):
                                         axes[3].imshow(cv2.imread(path, cv2.IMREAD_UNCHANGED))
                                         
                                         plt.savefig("sample%d-iou%.4f.png" % (i, intersection_sum/union_sum), bbox_inches="tight")
+                                elif args.num_image_samples > 0:
+                                    break
                         print(n, acc/n)
 
                 # image_path = test_path[i+99]
