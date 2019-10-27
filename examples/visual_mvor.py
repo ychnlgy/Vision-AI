@@ -111,7 +111,7 @@ def main(args):
 def cutout_human(test_data, i, pred_box, thickness, filter_size, threshold):
     path = test_data.image_paths[i][0].replace("color", "depth")
     assert os.path.isfile(path)
-    depth = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+    depth = cv2.imread(path, cv2.IMREAD_UNCHANGED).astype(numpy.float32)
     pred_box = pred_box.cpu().numpy()
     
     W, H = depth.shape
