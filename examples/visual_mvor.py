@@ -25,6 +25,10 @@ def main(args):
         JsonFile = args.json_file
         
         fig, axes = plt.subplots(ncols=4, sharey=True, figsize=(18, 12))
+        conv_size = args.filter_size*2 + 1
+        conv = torch.nn.Conv2d(1, 1, conv_size, padding=args.filter_size, bias=False)
+        conv.weight = torch.nn.Parameter(torch.ones(1, 1, conv_size, conv_size)/conv_size**2)
+        conv = conv.to(device).eval()
         
         with torch.no_grad():
                 with open(path, 'rb') as f:
@@ -72,8 +76,8 @@ def main(args):
                                         path = test_data.image_paths[i][0].replace("color", "depth")
                                         assert os.path.isfile(path)
                                         depth = cv2.imread(path, cv2.IMREAD_UNCHANGED)
-                                        cut = cutout_human(depth, model_output, args.cut_thickness, args.filter_size, args.threshold)
-                                        axes[3].imshow(cut, cmap="hot", interpolation="nearest")
+                                        cut = cutout_human_tensor(depth, model_output, args.cut_thickness, args.threshold, conv)
+                                        axes[3].imshow(cut.numpy(), cmap="hot", interpolation="nearest")
                                         
                                         plt.savefig("sample%d-iou%.4f.png" % (i, intersection_sum/union_sum), bbox_inches="tight")
                                 elif args.num_image_samples > 0:
@@ -120,12 +124,21 @@ def cutout_human(depth, pred_box, thickness, filter_size, threshold):
                     out[x, y] = float(abs(depth[x, y] - med) < thickness)
     return depth * out.astype(depth.dtype)
 
+def cutout_human_tensor(depth, pred_box, thickness, threshold, conv):
+    mean = conv(depth)
+    out = depth.float() * pred_box.float()
+    final_mask = (out - mean).abs() < thickness
+    out[mean > threshold] *= final_mask.float()
+    out[mean <=threshold] = 0
+    return out > 0
+
 if __name__ == '__main__':
         parser = argparse.ArgumentParser()
         parser.add_argument("--num_image_samples", type=int, default=0)
         parser.add_argument("--cut_thickness", type=int, default=250)
         parser.add_argument("--filter_size", type=int, default=30)
         parser.add_argument("--threshold", type=float, default=0.25)
+        parser.add_argument("--use_depth_cutout", type=int, default=0)
         
         parser.add_argument("--model_type")
         parser.add_argument("--model")
