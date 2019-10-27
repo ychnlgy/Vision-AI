@@ -137,7 +137,7 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_path", default="../../mvor-master/dataset")
-    parser.add_argument("--json_file", default="../../mvor-master/annotations/camma_mvor_2018.json"
+    parser.add_argument("--json_file", default="../../mvor-master/annotations/camma_mvor_2018.json")
     args = parser.parse_args()
 
     save_K_sample_fromday4(args.json_file, args.data_path, 500, 'day4_test.pickle', 'day4_train.pickle')
