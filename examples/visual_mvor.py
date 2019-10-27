@@ -1,5 +1,6 @@
 import os
 
+import numpy
 import torch
 import argparse
 from mvordata import *
@@ -61,15 +62,18 @@ def main(args):
                                         axes[0].imshow(im)
                                         
                                         axes[1].set_title("Annotation")
-                                        axes[1].imshow(y.cpu().numpy())
+                                        axes[1].imshow(y.cpu().numpy(), cmap="hot", interpolation="nearest")
                                         
                                         axes[2].set_title("Model output")
-                                        axes[2].imshow(xh_box.cpu().numpy())
+                                        model_output = xh_box.cpu().numpy()
+                                        axes[2].imshow(model_output, cmap="hot", interpolation="nearest")
                                         
                                         axes[3].set_title("Depth refinement")
                                         path = test_data.image_paths[i][0].replace("color", "depth")
                                         assert os.path.isfile(path)
-                                        axes[3].imshow(cv2.imread(path, cv2.IMREAD_UNCHANGED))
+                                        depth = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+                                        cut = cutout_human(depth, model_output, args.cut_thickness)
+                                        axes[3].imshow(cut, cmap="hot", interpolation="nearest")
                                         
                                         plt.savefig("sample%d-iou%.4f.png" % (i, intersection_sum/union_sum), bbox_inches="tight")
                                 elif args.num_image_samples > 0:
@@ -93,17 +97,21 @@ def main(args):
                 #       print(xh_box.size())
                         #
                 # f = plt.figure()
-                # f.add_subplot(1,2, 1)
+                # f.add_subplot(1,2, cutout_human1)
                 # imgplot = mpimg.imread(image_path[0])
                 # plt.imshow(imgplot)
                 # f.add_subplot(1,2, 2)
                 # plt.imshow(xh_box)
                 # plt.show(block=True)
 
+def cutout_human(depth, pred_box, thickness):
+    med = numpy.median(depth[pred_box.astype(bool)])
+    return (numpy.abs(depth * pred_box.astype(depth.dtype) - med) < thickness).astype(float)
 
 if __name__ == '__main__':
         parser = argparse.ArgumentParser()
         parser.add_argument("--num_image_samples", type=int, default=0)
+        parser.add_argument("--cut_thickness", type=int, default=250)
         parser.add_argument("--model_type")
         parser.add_argument("--model")
         parser.add_argument("--test_path")
