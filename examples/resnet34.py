@@ -8,13 +8,13 @@ class Unet_Resnet34(vision_ai.models.Unet):
         res34_model = torchvision.models.resnet34(pretrained=True)
         modules = list(res34_model.children())
         layer1 = modules[4]
-        layer1.requires_grad = False
+        #layer1.requires_grad = False
         layer2 = modules[5]
-        layer2.requires_grad = False
+        #layer2.requires_grad = False
         layer3 = modules[6]
-        layer3.requires_grad = False
+        #layer3.requires_grad = False
         layer4 = modules[7]
-        layer4.requires_grad = False
+        #layer4.requires_grad = False
         super().__init__(
             layers=[
                 torch.nn.Sequential(
