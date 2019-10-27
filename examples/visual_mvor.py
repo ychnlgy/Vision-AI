@@ -78,7 +78,7 @@ if __name__ == '__main__':
         parser.add_argument("--model_type")
         parser.add_argument("--model")
         parser.add_argument("--test_path")
-        parser.add_argumnet("--json_file", default="../../mvor-master/annotations/camma_mvor_2018.json")
+        parser.add_argument("--json_file", default="../../mvor-master/annotations/camma_mvor_2018.json")
         args = parser.parse_args()
         main(args)
         
