@@ -53,7 +53,8 @@ def main(args):
                                 xh_box = xh1 > xh0
                                 if args.use_depth_cutout:
                                     assert args.num_image_samples == 0
-                                    xh_box = cutout_human_tensor(test_data, i, xh_box, args.cut_thickness, conv) > 0
+                                    #xh_box = cutout_human_tensor(test_data, i, xh_box, args.cut_thickness, conv) > 0
+                                    xh_box = cutout_human(test_data, i, pred_box, args.cut_thickness, args.filter_size, args.threshold)
                                 intersection = xh_box.float() * y
                                 intersection_sum = intersection.sum()
                                 union_sum = xh_box.sum() + y.sum() - intersection_sum
@@ -107,21 +108,26 @@ def main(args):
                 # plt.imshow(xh_box)
                 # plt.show(block=True)
 
-#def cutout_human(depth, pred_box, thickness, filter_size, threshold):
-    #W, H = depth.shape
-    #out = numpy.zeros((W, H))
-    #depth = depth * pred_box.astype(depth.dtype)
-    #for x in range(W):
-        #for y in range(H):
-            #if pred_box[x, y] > 0:
-                #xs = slice(x-filter_size, x+filter_size)
-                #ys = slice(y-filter_size, y+filter_size)
-                #conv = pred_box[xs, ys]
-                #rest = numpy.mean(conv.astype(float))
-                #if rest > threshold:
-                    #med = numpy.median(depth[xs, ys])
-                    #out[x, y] = float(abs(depth[x, y] - med) < thickness)
-    #return depth * out.astype(depth.dtype)
+def cutout_human(test_data, i, pred_box, thickness, filter_size, threshold):
+    path = test_data.image_paths[i][0].replace("color", "depth")
+    assert os.path.isfile(path)
+    depth = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+    pred_box = pred_box.cpu().numpy()
+    
+    W, H = depth.shape
+    out = numpy.zeros((W, H))
+    depth = depth * pred_box.astype(depth.dtype)
+    for x in range(W):
+        for y in range(H):
+            if pred_box[x, y] > 0:
+                xs = slice(x-filter_size, x+filter_size)
+                ys = slice(y-filter_size, y+filter_size)
+                conv = pred_box[xs, ys]
+                rest = numpy.mean(conv.astype(float))
+                if rest > threshold:
+                    med = numpy.median(depth[xs, ys])
+                    out[x, y] = float(abs(depth[x, y] - med) < thickness)
+    return depth * out.astype(depth.dtype)
 
 def cutout_human_tensor(test_data, i, pred_box, thickness, conv):
         path = test_data.image_paths[i][0].replace("color", "depth")
@@ -140,8 +146,9 @@ def cutout_human_tensor(test_data, i, pred_box, thickness, conv):
 if __name__ == '__main__':
         parser = argparse.ArgumentParser()
         parser.add_argument("--num_image_samples", type=int, default=0)
-        parser.add_argument("--cut_thickness", type=int, default=250)
-        parser.add_argument("--filter_size", type=int, default=30)
+        parser.add_argument("--cut_thickness", type=int, default=150)
+        parser.add_argument("--filter_size", type=int, default=50)
+        parser.add_argument("--threshold", type=float, default=0.5)
         parser.add_argument("--use_depth_cutout", type=int, default=0)
         
         parser.add_argument("--model_type")
