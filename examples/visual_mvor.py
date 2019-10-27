@@ -57,7 +57,7 @@ def main(args):
                                             ax.cla()
                                         im = x.cpu()[0].permute(1, 2, 0).numpy()
                                         
-                                        pyplot.suptitle("Intersection over union: %.4f" % (intersection_sum/union_sum))
+                                        plt.suptitle("Intersection over union: %.4f" % (intersection_sum/union_sum))
                                         
                                         axes[0].set_title("Input")
                                         axes[0].imshow(im)
