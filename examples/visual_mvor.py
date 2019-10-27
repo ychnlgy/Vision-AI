@@ -32,7 +32,7 @@ def main(args):
         conv.weight = torch.nn.Parameter(torch.ones(1, 1, conv_size, conv_size)/conv_size**2)
         conv = conv.to(device).eval()
         
-        medp = MedianPool2d(conv_size, padding=args.filter_size).to(device).eval()
+        medp = MedianPool2d(conv_size, padding=args.filter_size).eval()
         
         with torch.no_grad():
                 with open(path, 'rb') as f:
@@ -134,7 +134,8 @@ def cutout_human_tensor(depth, pred_box, thickness, conv, medp):
     pred_box = torch.from_numpy(pred_box.astype(float)).to(device).unsqueeze(0).unsqueeze(0).float()
     mean = conv(depth)
     out = depth.clone()
-    mask = (out - medp(out)).abs() < thickness
+    median = medp(out.cpu()).to(device)
+    mask = (out - median).abs() < thickness
     out *= pred_box * mask.float()
     return out.squeeze(0).squeeze(0)
 
