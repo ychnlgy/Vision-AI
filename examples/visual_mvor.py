@@ -1,3 +1,5 @@
+import os
+
 import torch
 import argparse
 from mvordata import *
@@ -9,6 +11,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import time
 
+
 def main(args):
         device = ["cpu", "cuda"][torch.cuda.is_available()]
         model_path = args.model
@@ -19,6 +22,9 @@ def main(args):
         model.eval()
         path = args.test_path
         JsonFile = args.json_file
+        
+        fig, axes = plt.subplots(ncols=4, sharey=True)
+        
         with torch.no_grad():
                 with open(path, 'rb') as f:
                         test_path = pickle.load(f)
@@ -46,6 +52,28 @@ def main(args):
                                 if intersection_sum > 0:
                                         n += 1
                                         acc += intersection_sum / union_sum
+                                if i < args.num_image_samples:
+                                        for ax in axes:
+                                            ax.cla()
+                                        im = x.cpu().permute(1, 2, 0).numpy()
+                                        
+                                        pyplot.suptitle("Intersection over union: %.4f" % (intersection_sum/union_sum))
+                                        
+                                        axes[0].set_title("Input")
+                                        axes[0].imshow(im)
+                                        
+                                        axes[1].set_title("Annotation")
+                                        axes[1].imshow(y.cpu().numpy())
+                                        
+                                        axes[2].set_title("Model output")
+                                        axes[2].imshow(xh_box.cpu().numpy())
+                                        
+                                        axes[3].set_title("Depth refinement")
+                                        path = test_data.image_paths.replace("color", "depth")
+                                        assert os.path.isfile(path)
+                                        axes[3].imshow(cv2.imread(path, cv2.IMREAD_UNCHANGED))
+                                        
+                                        plt.savefig("sample%d.png" % i, bbox_inches="tight")
                         print(n, acc/n)
 
                 # image_path = test_path[i+99]
@@ -75,6 +103,7 @@ def main(args):
 
 if __name__ == '__main__':
         parser = argparse.ArgumentParser()
+        parser.add_argument("--num_image_samples", type=int, default=0)
         parser.add_argument("--model_type")
         parser.add_argument("--model")
         parser.add_argument("--test_path")
