@@ -123,7 +123,7 @@ def main(args):
                     #out[x, y] = float(abs(depth[x, y] - med) < thickness)
     #return depth * out.astype(depth.dtype)
 
-def cutout_human_tensor(testdata, i, pred_box, thickness, conv):
+def cutout_human_tensor(test_data, i, pred_box, thickness, conv):
         path = test_data.image_paths[i][0].replace("color", "depth")
         assert os.path.isfile(path)
         depth = cv2.imread(path, cv2.IMREAD_UNCHANGED)
