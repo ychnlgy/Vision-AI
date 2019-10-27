@@ -72,7 +72,7 @@ def main(args):
                                         path = test_data.image_paths[i][0].replace("color", "depth")
                                         assert os.path.isfile(path)
                                         depth = cv2.imread(path, cv2.IMREAD_UNCHANGED)
-                                        cut = cutout_human(depth, model_output, args.cut_thickness)
+                                        cut = cutout_human(depth, model_output, args.cut_thickness, args.filter_size, args.threshold)
                                         axes[3].imshow(cut, cmap="hot", interpolation="nearest")
                                         
                                         plt.savefig("sample%d-iou%.4f.png" % (i, intersection_sum/union_sum), bbox_inches="tight")
@@ -104,14 +104,29 @@ def main(args):
                 # plt.imshow(xh_box)
                 # plt.show(block=True)
 
-def cutout_human(depth, pred_box, thickness):
-    med = numpy.median(depth[pred_box.astype(bool)])
-    return (numpy.abs(depth * pred_box.astype(depth.dtype) - med) < thickness).astype(float)
+def cutout_human(depth, pred_box, thickness, filter_size, threshold):
+    W, H = depth.shape
+    out = numpy.zeros((W, H))
+    depth = depth * pred_box.astype(depth.dtype)
+    for x in range(W):
+        for y in range(H):
+            if pred_box[x, y] > 0:
+                xs = slice(x-filter_size, x+filter_size)
+                ys = slice(y-filter_size, y+filter_size)
+                conv = pred_box[xs, ys]
+                rest = numpy.mean(conv.astype(float))
+                if rest > threshold:
+                    med = numpy.median(depth[xs, ys])
+                    out[x, y] = float(abs(depth[x, y] - med) < thickness)
+    return depth * out.astype(depth.dtype)
 
 if __name__ == '__main__':
         parser = argparse.ArgumentParser()
         parser.add_argument("--num_image_samples", type=int, default=0)
         parser.add_argument("--cut_thickness", type=int, default=250)
+        parser.add_argument("--filter_size", type=int, default=30)
+        parser.add_argument("--threshold", type=float, default=0.25)
+        
         parser.add_argument("--model_type")
         parser.add_argument("--model")
         parser.add_argument("--test_path")
