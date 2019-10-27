@@ -51,6 +51,9 @@ def main(args):
                                 xh1 = xh[:, :, 1]
                                 xh0 = xh[:, :, 0]
                                 xh_box = xh1 > xh0
+                                if args.use_depth_cutout:
+                                    assert args.num_image_samples == 0
+                                    xh_box = cutout_human_tensor(test_data, i, xh_box, args.cut_thickness, conv)
                                 intersection = xh_box.float() * y
                                 intersection_sum = intersection.sum()
                                 union_sum = xh_box.sum() + y.sum() - intersection_sum
@@ -69,14 +72,10 @@ def main(args):
                                         axes[1].imshow(y.cpu().numpy(), cmap="hot", interpolation="nearest")
                                         
                                         axes[2].set_title("Model output")
-                                        model_output = xh_box.cpu().numpy()
-                                        axes[2].imshow(model_output, cmap="hot", interpolation="nearest")
+                                        axes[2].imshow(xh_box.cpu().numpy(), cmap="hot", interpolation="nearest")
                                         
                                         axes[3].set_title("Depth refinement")
-                                        path = test_data.image_paths[i][0].replace("color", "depth")
-                                        assert os.path.isfile(path)
-                                        depth = cv2.imread(path, cv2.IMREAD_UNCHANGED)
-                                        cut = cutout_human_tensor(depth, model_output, args.cut_thickness, conv)
+                                        cut = cutout_human_tensor(test_data, i, xh_box, args.cut_thickness, conv)
                                         axes[3].imshow(cut.cpu().numpy(), cmap="hot", interpolation="nearest")
                                         
                                         plt.savefig("sample%d-iou%.4f.png" % (i, intersection_sum/union_sum), bbox_inches="tight")
@@ -124,15 +123,19 @@ def main(args):
                     #out[x, y] = float(abs(depth[x, y] - med) < thickness)
     #return depth * out.astype(depth.dtype)
 
-def cutout_human_tensor(depth, pred_box, thickness, conv):
-    device = conv.weight.device
-    depth = torch.from_numpy(depth.astype(float)).to(device).unsqueeze(0).unsqueeze(0).float()
-    pred_box = torch.from_numpy(pred_box.astype(float)).to(device).unsqueeze(0).unsqueeze(0).float()
-    mean = conv(depth)
-    out = depth.clone()
-    mask = (out - mean).abs() < thickness
-    out *= pred_box * mask.float()
-    return out.squeeze(0).squeeze(0)
+def cutout_human_tensor(testdata, i, pred_box, thickness, conv):
+        path = test_data.image_paths[i][0].replace("color", "depth")
+        assert os.path.isfile(path)
+        depth = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+        device = conv.weight.device
+        depth = torch.from_numpy(depth.astype(float)).to(device).unsqueeze(0).unsqueeze(0).float()
+        pred_box = pred_box.to(device).unsqueeze(0).unsqueeze(0).float()
+        mean = conv(depth)
+        out = depth.clone()
+        mask = (out - mean).abs() < thickness
+        out *= pred_box * mask.float()
+        return out.squeeze(0).squeeze(0)
+
 
 if __name__ == '__main__':
         parser = argparse.ArgumentParser()
