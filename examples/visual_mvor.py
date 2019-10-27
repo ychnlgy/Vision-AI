@@ -13,8 +13,6 @@ import matplotlib.image as mpimg
 import time
 
 
-from median import MedianPool2d
-
 def main(args):
         device = ["cpu", "cuda"][torch.cuda.is_available()]
         model_path = args.model
@@ -31,8 +29,6 @@ def main(args):
         conv = torch.nn.Conv2d(1, 1, conv_size, padding=args.filter_size, bias=False)
         conv.weight = torch.nn.Parameter(torch.ones(1, 1, conv_size, conv_size)/conv_size**2)
         conv = conv.to(device).eval()
-        
-        medp = MedianPool2d(conv_size, padding=args.filter_size).eval()
         
         with torch.no_grad():
                 with open(path, 'rb') as f:
@@ -80,7 +76,7 @@ def main(args):
                                         path = test_data.image_paths[i][0].replace("color", "depth")
                                         assert os.path.isfile(path)
                                         depth = cv2.imread(path, cv2.IMREAD_UNCHANGED)
-                                        cut = cutout_human_tensor(depth, model_output, args.cut_thickness, conv, medp)
+                                        cut = cutout_human_tensor(depth, model_output, args.cut_thickness, conv)
                                         axes[3].imshow(cut.cpu().numpy(), cmap="hot", interpolation="nearest")
                                         
                                         plt.savefig("sample%d-iou%.4f.png" % (i, intersection_sum/union_sum), bbox_inches="tight")
@@ -128,14 +124,13 @@ def main(args):
                     #out[x, y] = float(abs(depth[x, y] - med) < thickness)
     #return depth * out.astype(depth.dtype)
 
-def cutout_human_tensor(depth, pred_box, thickness, conv, medp):
+def cutout_human_tensor(depth, pred_box, thickness, conv):
     device = conv.weight.device
     depth = torch.from_numpy(depth.astype(float)).to(device).unsqueeze(0).unsqueeze(0).float()
     pred_box = torch.from_numpy(pred_box.astype(float)).to(device).unsqueeze(0).unsqueeze(0).float()
     mean = conv(depth)
     out = depth.clone()
-    median = medp(out.cpu()).to(device)
-    mask = (out - median).abs() < thickness
+    mask = (out - mean).abs() < thickness
     out *= pred_box * mask.float()
     return out.squeeze(0).squeeze(0)
 
