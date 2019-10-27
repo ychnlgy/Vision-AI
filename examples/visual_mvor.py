@@ -77,7 +77,7 @@ def main(args):
                                         assert os.path.isfile(path)
                                         depth = cv2.imread(path, cv2.IMREAD_UNCHANGED)
                                         cut = cutout_human_tensor(depth, model_output, args.cut_thickness, args.threshold, conv)
-                                        axes[3].imshow(cut.numpy(), cmap="hot", interpolation="nearest")
+                                        axes[3].imshow(cut.cpu().numpy(), cmap="hot", interpolation="nearest")
                                         
                                         plt.savefig("sample%d-iou%.4f.png" % (i, intersection_sum/union_sum), bbox_inches="tight")
                                 elif args.num_image_samples > 0:
@@ -125,6 +125,9 @@ def cutout_human(depth, pred_box, thickness, filter_size, threshold):
     return depth * out.astype(depth.dtype)
 
 def cutout_human_tensor(depth, pred_box, thickness, threshold, conv):
+    device = conv.weight.device
+    depth = torch.from_numpy(depth).to(device)
+    pred_box = torch.from_numpy(pred_box).to(device)
     mean = conv(depth)
     out = depth.float() * pred_box.float()
     final_mask = (out - mean).abs() < thickness
