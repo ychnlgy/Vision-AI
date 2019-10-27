@@ -55,9 +55,7 @@ def main(args):
                                 if i < args.num_image_samples:
                                         for ax in axes:
                                             ax.cla()
-                                        im = x.cpu()[0].permute(1, 2, 0).numpy()
-                                        
-                                        plt.suptitle("Intersection over union: %.4f" % (intersection_sum/union_sum))
+                                        im = x.cpu()[0].permute(1, 2, 0).numpy()/255.0
                                         
                                         axes[0].set_title("Input")
                                         axes[0].imshow(im)
@@ -73,7 +71,7 @@ def main(args):
                                         assert os.path.isfile(path)
                                         axes[3].imshow(cv2.imread(path, cv2.IMREAD_UNCHANGED))
                                         
-                                        plt.savefig("sample%d.png" % i, bbox_inches="tight")
+                                        plt.savefig("sample%d-iou%.4f.png" % (i, intersection_sum/union_sum), bbox_inches="tight")
                         print(n, acc/n)
 
                 # image_path = test_path[i+99]
