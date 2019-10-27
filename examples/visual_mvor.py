@@ -55,7 +55,7 @@ def main(args):
                                 if i < args.num_image_samples:
                                         for ax in axes:
                                             ax.cla()
-                                        im = x.cpu().permute(1, 2, 0).numpy()
+                                        im = x.cpu()[0].permute(1, 2, 0).numpy()
                                         
                                         pyplot.suptitle("Intersection over union: %.4f" % (intersection_sum/union_sum))
                                         
