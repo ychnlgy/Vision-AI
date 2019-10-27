@@ -54,7 +54,7 @@ def main(args):
                                 if args.use_depth_cutout:
                                     assert args.num_image_samples == 0
                                     #xh_box = cutout_human_tensor(test_data, i, xh_box, args.cut_thickness, conv) > 0
-                                    xh_box = cutout_human(test_data, i, pred_box, args.cut_thickness, args.filter_size, args.threshold)
+                                    xh_box = cutout_human(test_data, i, xh_box, args.cut_thickness, args.filter_size, args.threshold)
                                 intersection = xh_box.float() * y
                                 intersection_sum = intersection.sum()
                                 union_sum = xh_box.sum() + y.sum() - intersection_sum
