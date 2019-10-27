@@ -131,7 +131,7 @@ def cutout_human_tensor(depth, pred_box, thickness, threshold, conv):
     mean = conv(depth)
     out = depth * pred_box
     mask = (out - mean).abs() < thickness
-    out[mean > threshold] *= mask.float()
+    out *= mask.float()
     out[mean <=threshold] = 0
     return (out > 0).squeeze(0).squeeze(0)
 
