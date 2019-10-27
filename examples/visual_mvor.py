@@ -69,7 +69,7 @@ def main(args):
                                         axes[2].imshow(xh_box.cpu().numpy())
                                         
                                         axes[3].set_title("Depth refinement")
-                                        path = test_data.image_paths[i].replace("color", "depth")
+                                        path = test_data.image_paths[i][0].replace("color", "depth")
                                         assert os.path.isfile(path)
                                         axes[3].imshow(cv2.imread(path, cv2.IMREAD_UNCHANGED))
                                         
