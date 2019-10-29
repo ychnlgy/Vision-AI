@@ -77,7 +77,7 @@ def main(args):
                                         axes[2].imshow(xh_box.cpu().numpy(), cmap="hot", interpolation="nearest")
                                         
                                         axes[3].set_title("Depth refinement")
-                                        cut = cutout_human_tensor(test_data, i, xh_box, args.cut_thickness, conv)
+                                        cut = cutout_human(test_data, i, xh_box, args.cut_thickness, args.filter_size, args.threshold)
                                         axes[3].imshow(cut.cpu().numpy(), cmap="hot", interpolation="nearest")
                                         
                                         plt.savefig("sample%d-iou%.4f.png" % (i, intersection_sum/union_sum), bbox_inches="tight")
