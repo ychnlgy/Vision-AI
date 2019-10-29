@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import time
 
+from scipy import ndimage
+
 
 def main(args):
         device = ["cpu", "cuda"][torch.cuda.is_available()]
@@ -54,7 +56,7 @@ def main(args):
                                 if args.use_depth_cutout:
                                     assert args.num_image_samples == 0
                                     #xh_box = cutout_human_tensor(test_data, i, xh_box, args.cut_thickness, conv) > 0
-                                    xh_box = cutout_human(test_data, i, xh_box, args.cut_thickness, args.filter_size, args.threshold)
+                                    xh_box = cutout_human_fast(test_data, i, xh_box, args.cut_thickness, args.filter_size, args.threshold)
                                     xh_box = xh_box.to(device)
                                 intersection = xh_box.float() * y
                                 intersection_sum = intersection.sum()
@@ -77,7 +79,7 @@ def main(args):
                                         axes[2].imshow(xh_box.cpu().numpy(), cmap="hot", interpolation="nearest")
                                         
                                         axes[3].set_title("Depth refinement")
-                                        cut = cutout_human(test_data, i, xh_box, args.cut_thickness, args.filter_size, args.threshold)
+                                        cut = cutout_human_fast(test_data, i, xh_box, args.cut_thickness, args.filter_size, args.threshold)
                                         axes[3].imshow(cut.cpu().numpy(), cmap="hot", interpolation="nearest")
                                         
                                         plt.savefig("sample%d-iou%.4f.png" % (i, intersection_sum/union_sum), bbox_inches="tight")
@@ -128,7 +130,19 @@ def cutout_human(test_data, i, pred_box, thickness, filter_size, threshold):
                 if rest > threshold:
                     med = numpy.median(depth[xs, ys])
                     out[x, y] = float(abs(depth[x, y] - med) < thickness)
-    return torch.from_numpy(depth * out.astype(depth.dtype)) > 0
+    return torch.from_numpy(depth * out.astype(depth.dtype))
+
+def cutout_human_fast(test_data, i, pred_box, thickness, filter_size, threshold):
+    path = test_data.image_paths[i][0].replace("color", "depth")
+    assert os.path.isfile(path)
+    depth = cv2.imread(path, cv2.IMREAD_UNCHANGED).astype(numpy.float32)
+    pred_box = pred_box.cpu().numpy().astype(numpy.float32)
+    med_fix = ndimage.median_filter(depth, size=11).astype(numpy.float32)  # correct for zeros: no depth data
+    med_full = ndimage.median_filter(depth, size=filter_size*2).astype(numpy.float32)
+    keep = (numpy.abs(med_fix - med_full) < thickness).astype(numpy.float32)
+    out = med_fix * pred_box * keep
+    return torch.from_numpy(out)
+
 
 def cutout_human_tensor(test_data, i, pred_box, thickness, conv):
         path = test_data.image_paths[i][0].replace("color", "depth")
