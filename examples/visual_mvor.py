@@ -14,6 +14,8 @@ import time
 
 from scipy import ndimage
 
+from focus import extract_object_depths
+
 
 def main(args):
         device = ["cpu", "cuda"][torch.cuda.is_available()]
@@ -56,7 +58,7 @@ def main(args):
                                 if args.use_depth_cutout:
                                     assert args.num_image_samples == 0
                                     #xh_box = cutout_human_tensor(test_data, i, xh_box, args.cut_thickness, conv) > 0
-                                    xh_box = cutout_human(test_data, i, xh_box, args.cut_thickness, args.filter_size, args.threshold)
+                                    xh_box = cutout_human_proper(test_data, i, xh_box, args.cut_thickness, args.filter_size, args.threshold)
                                     xh_box = xh_box.to(device)
                                 intersection = xh_box.float() * y
                                 intersection_sum = intersection.sum()
@@ -79,7 +81,7 @@ def main(args):
                                         axes[2].imshow(xh_box.cpu().numpy(), cmap="hot", interpolation="nearest")
                                         
                                         axes[3].set_title("Depth refinement")
-                                        cut = cutout_human(test_data, i, xh_box, args.cut_thickness, args.filter_size, args.threshold)
+                                        cut = cutout_human_proper(test_data, i, xh_box, args.cut_thickness, args.filter_size, args.threshold)
                                         axes[3].imshow(cut.cpu().numpy(), cmap="hot", interpolation="nearest")
                                         
                                         plt.savefig("sample%d-iou%.4f.png" % (i, intersection_sum/union_sum), bbox_inches="tight")
@@ -130,6 +132,27 @@ def cutout_human(test_data, i, pred_box, thickness, filter_size, threshold):
                 if rest > threshold:
                     med = numpy.median(depth[xs, ys])
                     out[x, y] = float(abs(depth[x, y] - med) < thickness)
+    return torch.from_numpy(depth * out.astype(depth.dtype))
+
+def cutout_human_proper(test_data, i, pred_box, thickness, filter_size, threshold):
+    path = test_data.image_paths[i][0].replace("color", "depth")
+    assert os.path.isfile(path)
+    depth = cv2.imread(path, cv2.IMREAD_UNCHANGED).astype(numpy.float32)
+    pred_box = pred_box.cpu().numpy()
+    
+    W, H = depth.shape
+    out = numpy.zeros((W, H))
+    depth = depth * pred_box.astype(depth.dtype)
+    for x in range(W):
+        for y in range(H):
+            if pred_box[x, y] > 0:
+                xs = slice(x-filter_size, x+filter_size)
+                ys = slice(y-filter_size, y+filter_size)
+                conv = pred_box[xs, ys]
+                rest = numpy.mean(conv.astype(float))
+                if rest > threshold:
+                    low, hgh = extract_object_depths(conv)
+                    out[x, y] = float((low <= depth[x, y]) and (depth[x, y] <= hgh))
     return torch.from_numpy(depth * out.astype(depth.dtype))
 
 def cutout_human_fast(test_data, i, pred_box, thickness, filter_size, threshold):
