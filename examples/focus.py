@@ -33,4 +33,4 @@ def find_valley(interp, p, xs, step):
         else:
             p = out
             out += step
-    return out
+    return p
