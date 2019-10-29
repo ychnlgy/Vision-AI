@@ -56,7 +56,7 @@ def main(args):
                                 if args.use_depth_cutout:
                                     assert args.num_image_samples == 0
                                     #xh_box = cutout_human_tensor(test_data, i, xh_box, args.cut_thickness, conv) > 0
-                                    xh_box = cutout_human_fast(test_data, i, xh_box, args.cut_thickness, args.filter_size, args.threshold)
+                                    xh_box = cutout_human(test_data, i, xh_box, args.cut_thickness, args.filter_size, args.threshold)
                                     xh_box = xh_box.to(device)
                                 intersection = xh_box.float() * y
                                 intersection_sum = intersection.sum()
@@ -79,7 +79,7 @@ def main(args):
                                         axes[2].imshow(xh_box.cpu().numpy(), cmap="hot", interpolation="nearest")
                                         
                                         axes[3].set_title("Depth refinement")
-                                        cut = cutout_human_fast(test_data, i, xh_box, args.cut_thickness, args.filter_size, args.threshold)
+                                        cut = cutout_human(test_data, i, xh_box, args.cut_thickness, args.filter_size, args.threshold)
                                         axes[3].imshow(cut.cpu().numpy(), cmap="hot", interpolation="nearest")
                                         
                                         plt.savefig("sample%d-iou%.4f.png" % (i, intersection_sum/union_sum), bbox_inches="tight")
