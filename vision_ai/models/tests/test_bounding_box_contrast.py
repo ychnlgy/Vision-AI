@@ -32,7 +32,7 @@ def test_one_box_same():
         pred_xh[i, :, x:x+w, y:y+h] = 1
         embeddings_xh[i, :, x:x+w, y:y+h] = torch.Tensor(
             [1, 2, 3]
-        )
+        ).view(3, 1, 1)
 
     assert vision_ai.models.bounding_box_contrast.batch_loss(
         pred_xh,
