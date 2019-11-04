@@ -14,7 +14,7 @@ def batch_loss(
     sum_loss = n = 0.0
     for n, args in enumerate(zip(pred_xh, embeddings_xh, bbox_coords), 1):
         sum_loss += _single_bounding_box_contrastive_loss(
-            pxh, exh, bbox, frac_compare
+            *args, frac_compare
         )
     return sum_loss / n
 
