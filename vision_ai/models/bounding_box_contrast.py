@@ -36,16 +36,19 @@ def _single_bounding_box_contrastive_loss(
         )
     else:
         i, j = _obtain_two_rand_diff_bbox_coords(bbox_coords)
-        return _bounding_box_similarity_loss(
+        sim_loss = _bounding_box_similarity_loss(
             pred_xh,
             embeddings_xh,
             bbox_coords[i]
-        ) + _bounding_box_difference_loss(
+        )
+        dif_loss = _bounding_box_difference_loss(
             pred_xh,
             embeddings_xh,
             bbox_coords[i],
             bbox_coords[j]
         )
+        print(sim_loss, dif_loss)
+        return sim_loss + diff_loss
 
 
 def _obtain_two_rand_diff_bbox_coords(bbox_coords):
@@ -99,8 +102,7 @@ def _bounding_box_difference_loss(
     pred_xh,
     embeddings_xh,
     bbox_coord1,
-    bbox_coord2,
-    eps = 1e-12
+    bbox_coord2
 ):
     selection = pred_xh[1] > pred_xh[0]
     mask1 = torch.zeros_like(selection)
