@@ -29,8 +29,8 @@ def test_one_box_same():
     embeddings_xh = torch.zeros(2, 3, 4, 4)
     for i, bboxes in enumerate(bbox_coords):
         x, y, w, h = bboxes[0]
-        pred_xh[i, x:x+w, y:y+h, 1] = 1
-        embeddings_xh[i, x:x+w, y:y+h] = torch.Tensor(
+        pred_xh[i, :, x:x+w, y:y+h] = 1
+        embeddings_xh[i, :, x:x+w, y:y+h] = torch.Tensor(
             [1, 2, 3]
         )
 
