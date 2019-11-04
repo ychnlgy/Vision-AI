@@ -61,6 +61,12 @@ def _obtain_two_rand_diff_bbox_coords(bbox_coords):
     return i, j
 
 
+def _extract_avg_embedding_selections(emb, select):
+    d, w, h = emb.size()
+    select = select.unsqueeze(0).repeat(d, 1, 1)
+    return emb[select].view(d, -1).mean(dim=-1)
+
+
 def _bounding_box_similarity_loss(
     pred_xh,
     embeddings_xh,
@@ -80,8 +86,9 @@ def _bounding_box_similarity_loss(
     select_part1 = correct_selection & part1
     select_part2 = correct_selection & part2
 
-    emb_part1 = embeddings_xh[select_part1].mean(dim=0)
-    emb_part2 = embeddings_xh[select_part2].mean(dim=0)
+    emb_part1 = _extract_avg_embedding_selections(embeddings_xh, select_part1)
+    emb_part2 = _extract_avg_embedding_selections(embeddings_xh, select_part2)
+
     # we wish to maximize their average cosine similarity
     return -emb_part1.dot(emb_part2)/(emb_part1.norm()*emb_part2.norm() + eps)
 
@@ -94,7 +101,7 @@ def _bounding_box_difference_loss(
     frac_compare,
     eps = 1e-12
 ):
-    selection = pred_xh[:, :, 1] > pred_xh[:, :, 0]
+    selection = pred_xh[1] > pred_xh[0]
     mask1 = torch.zeros_like(selection)
     mask2 = torch.zeros_like(selection)
     x1, y1, w1, h1 = bbox_coord1
@@ -110,7 +117,8 @@ def _bounding_box_difference_loss(
     select_part1 = correct_selection1 & part1
     select_part2 = correct_selection2 & part2
 
-    emb_part1 = embeddings_xh[select_part1].mean(dim=0)
-    emb_part2 = embeddings_xh[select_part2].mean(dim=0)
+    emb_part1 = _extract_avg_embedding_selections(embeddings_xh, select_part1)
+    emb_part2 = _extract_avg_embedding_selections(embeddings_xh, select_part2)
+
     # we wish to minimize their average cosine similarity
     return emb_part1.dot(emb_part2)/(emb_part1.norm()*emb_part2.norm() + eps)
