@@ -34,7 +34,7 @@ def test_one_box_same():
             [1, 2, 3]
         ).view(3, 1, 1)
 
-    eps = 1e-8
+    eps = 1e-6
     assert (vision_ai.models.bounding_box_contrast.batch_loss(
         pred_xh,
         embeddings_xh,
