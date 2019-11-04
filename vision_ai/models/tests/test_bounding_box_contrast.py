@@ -59,6 +59,8 @@ def test_one_box_diff():
                     [dx*(1-s), dy*(1-s), s]
                 )
 
+    print(embeddings_xh)
+
     eps = 1e-6
     assert (vision_ai.models.bounding_box_contrast.batch_loss(
         pred_xh,
