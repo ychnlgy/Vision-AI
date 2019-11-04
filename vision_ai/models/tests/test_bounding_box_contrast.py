@@ -80,7 +80,7 @@ def test_two_boxes_same():
         pred_xh,
         embeddings_xh,
         bbox_coords
-    ) - 0.0)) < 1e-6
+    ) - 0.0) < 1e-6
 
 
 def test_two_boxes_diff():
