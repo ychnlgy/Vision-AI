@@ -68,7 +68,7 @@ def _bounding_box_similarity_loss(
     frac_compare,
     eps = 1e-12
 ):
-    selection = pred_xh[:, :, 1] > pred_xh[:, :, 0]
+    selection = pred_xh[:, 1] > pred_xh[:, 0]
     mask = torch.zeros_like(selection)
     x, y, w, h = bbox_coord
     mask[x:x+w, y:y+h] = 1
