@@ -34,11 +34,12 @@ def test_one_box_same():
             [1, 2, 3]
         ).view(3, 1, 1)
 
-    assert vision_ai.models.bounding_box_contrast.batch_loss(
+    eps = 1e-8
+    assert (vision_ai.models.bounding_box_contrast.batch_loss(
         pred_xh,
         embeddings_xh,
         bbox_coords,
         frac_compare=1.0
-    ) == 1.0
+    ) - (-1.0)).abs() < eps
 
 
