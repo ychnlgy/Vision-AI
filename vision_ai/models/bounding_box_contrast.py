@@ -10,6 +10,21 @@ def batch_loss(
     bbox_coords,
     mean=True
 ):
+    """Contrastive loss for learning to differentiate between bounding boxes.
+    
+    Parameters :
+    ============
+    pred_xh : torch.FloatTensor of size (N, 2, W, H). Pixel-wise bounding box
+        prediction by the model, using its final layer on the pixel embeddings.
+    embeddings_xh : embeddings prior to the model's final layer.
+    bbox_coords : list of list of (x, y, w, h) of bounding boxes. Corresponds
+        to the indices of pred_xh and embeddings_xh.
+    mean : bool indicator of whether to use mean of batch or not.
+
+    Output :
+    ========
+    loss : single tensor value that can backpropogate gradient in respect to loss
+    """
     assert len(pred_xh) == len(embeddings_xh) == len(bbox_coords)
 
     sum_loss = n = 0.0
