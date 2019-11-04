@@ -14,8 +14,7 @@ def test_no_boxes():
     assert vision_ai.models.bounding_box_contrast.batch_loss(
         pred_xh,
         embeddings_xh,
-        bbox_coords,
-        frac_compare=0.5
+        bbox_coords
     ) == 0.0
 
 
@@ -39,7 +38,6 @@ def test_one_box_same():
         pred_xh,
         embeddings_xh,
         bbox_coords,
-        frac_compare=1.0
     ) - (-1.0)).abs() < eps
 
 
@@ -66,5 +64,4 @@ def test_one_box_diff():
         pred_xh,
         embeddings_xh,
         bbox_coords,
-        frac_compare=1.0
     ) - 0.0).abs() < eps
