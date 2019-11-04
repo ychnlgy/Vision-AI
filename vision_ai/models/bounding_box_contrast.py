@@ -72,7 +72,7 @@ def _extract_avg_embedding_selections(emb, select1, select2):
 
 
 def cosine_sim(m1, m2, eps=1e-12):
-    return (m1*m2).sum(dim=1)/(m1.norm(dim=1)*m2.norm(dim=1) + eps)
+    return ((m1*m2).sum(dim=1)/(m1.norm(dim=1)*m2.norm(dim=1) + eps)).mean()
 
 
 def _bounding_box_similarity_loss(
