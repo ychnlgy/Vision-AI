@@ -74,8 +74,8 @@ def _bounding_box_similarity_loss(
     mask[x:x+w, y:y+h] = 1
     correct_selection = selection & mask
 
-    part1 = torch.rand_like(correct_selection) < frac_compare
-    part2 = torch.rand_like(correct_selection) < frac_compare
+    part1 = torch.rand(correct_selection.size()) < frac_compare
+    part2 = torch.rand(correct_selection.size()) < frac_compare
 
     select_part1 = correct_selection & part1
     select_part2 = correct_selection & part2
@@ -104,8 +104,8 @@ def _bounding_box_difference_loss(
     correct_selection1 = selection & mask1
     correct_selection2 = selection & mask2
 
-    part1 = torch.rand_like(correct_selection1) < frac_compare
-    part2 = torch.rand_like(correct_selection2) < frac_compare
+    part1 = torch.rand(correct_selection1.size()) < frac_compare
+    part2 = torch.rand(correct_selection2.size()) < frac_compare
 
     select_part1 = correct_selection1 & part1
     select_part2 = correct_selection2 & part2
