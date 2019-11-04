@@ -47,8 +47,7 @@ def _single_bounding_box_contrastive_loss(
             bbox_coords[i],
             bbox_coords[j]
         )
-        print(sim_loss, dif_loss)
-        return sim_loss + diff_loss
+        return sim_loss + dif_loss
 
 
 def _obtain_two_rand_diff_bbox_coords(bbox_coords):
