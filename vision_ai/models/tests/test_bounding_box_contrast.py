@@ -66,3 +66,18 @@ def test_one_box_diff():
         embeddings_xh,
         bbox_coords,
     ) < 0.5
+
+
+def test_two_boxes_same():
+    numpy.random.seed(5)
+    bbox_coords = [
+        [(0, 0, 2, 2), (2, 0, 2, 2)]
+    ]
+    pred_xh = torch.zeros(1, 2, 4, 4)
+    pred_xh[0, 1] = 1
+    embeddings_xh = torch.ones(1, 3, 4, 4)
+    assert (vision_ai.models.bounding_box_contrast.batch_loss(
+        pred_xh,
+        embeddings_xh,
+        bbox_coords
+    ) - (-2.0)) < 1e-4

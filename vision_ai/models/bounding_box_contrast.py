@@ -7,14 +7,15 @@ import torch
 def batch_loss(
     pred_xh,
     embeddings_xh,
-    bbox_coords
+    bbox_coords,
+    mean=True
 ):
     assert len(pred_xh) == len(embeddings_xh) == len(bbox_coords)
 
     sum_loss = n = 0.0
     for n, args in enumerate(zip(pred_xh, embeddings_xh, bbox_coords), 1):
         sum_loss += _single_bounding_box_contrastive_loss(*args)
-    return sum_loss / n
+    return sum_loss / n**int(mean)
 
 
 # === PRIVATE ===
